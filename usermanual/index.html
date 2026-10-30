@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Untitled</title>
+<style>
+*,*::before,*::after{box-sizing:border-box}
+body{margin:0 auto;padding:3rem 1.5rem 4rem}
+img{max-width:100%;height:auto}
+pre{overflow-x:auto}
+table{border-collapse:collapse;width:100%}
+.highlight{border-radius:8px;margin:1.2rem 0;overflow-x:auto}
+.highlight pre{margin:0;background:none !important;border:0 !important}
+.mf-code{position:relative}
+.mf-code .highlight{margin:1.2rem 0}
+.mf-copy{position:absolute;top:.5rem;right:.5rem;z-index:2;display:inline-flex;align-items:center;gap:.35rem;
+  padding:.28rem .6rem;font:600 12px/1 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  color:#57606a;background:rgba(255,255,255,.92);border:1px solid #d0d7de;border-radius:6px;cursor:pointer;
+  opacity:.55;transition:opacity .15s,background .15s,color .15s}
+.mf-code:hover .mf-copy,.mf-copy:focus-visible{opacity:1}
+.mf-copy:hover{background:#fff;color:#111}
+.mf-copy.done{opacity:1;color:#1a7f37;border-color:#1a7f37}
+.mf-copy.fail{opacity:1;color:#cf222e;border-color:#cf222e}
+@media (hover:none){.mf-copy{opacity:1}}
+pre { line-height: 125%; }
+td.linenos .normal { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
+span.linenos { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
+td.linenos .special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
+span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
+.highlight .hll { background-color: #ffffcc }
+.highlight { background: #f8f8f8; }
+.highlight .c { color: #3D7B7B; font-style: italic } /* Comment */
+.highlight .err { border: 1px solid #FF0000 } /* Error */
+.highlight .k { color: #008000; font-weight: bold } /* Keyword */
+.highlight .o { color: #666666 } /* Operator */
+.highlight .ch { color: #3D7B7B; font-style: italic } /* Comment.Hashbang */
+.highlight .cm { color: #3D7B7B; font-style: italic } /* Comment.Multiline */
+.highlight .cp { color: #9C6500 } /* Comment.Preproc */
+.highlight .cpf { color: #3D7B7B; font-style: italic } /* Comment.PreprocFile */
+.highlight .c1 { color: #3D7B7B; font-style: italic } /* Comment.Single */
+.highlight .cs { color: #3D7B7B; font-style: italic } /* Comment.Special */
+.highlight .gd { color: #A00000 } /* Generic.Deleted */
+.highlight .ge { font-style: italic } /* Generic.Emph */
+.highlight .ges { font-weight: bold; font-style: italic } /* Generic.EmphStrong */
+.highlight .gr { color: #E40000 } /* Generic.Error */
+.highlight .gh { color: #000080; font-weight: bold } /* Generic.Heading */
+.highlight .gi { color: #008400 } /* Generic.Inserted */
+.highlight .go { color: #717171 } /* Generic.Output */
+.highlight .gp { color: #000080; font-weight: bold } /* Generic.Prompt */
+.highlight .gs { font-weight: bold } /* Generic.Strong */
+.highlight .gu { color: #800080; font-weight: bold } /* Generic.Subheading */
+.highlight .gt { color: #0044DD } /* Generic.Traceback */
+.highlight .kc { color: #008000; font-weight: bold } /* Keyword.Constant */
+.highlight .kd { color: #008000; font-weight: bold } /* Keyword.Declaration */
+.highlight .kn { color: #008000; font-weight: bold } /* Keyword.Namespace */
+.highlight .kp { color: #008000 } /* Keyword.Pseudo */
+.highlight .kr { color: #008000; font-weight: bold } /* Keyword.Reserved */
+.highlight .kt { color: #B00040 } /* Keyword.Type */
+.highlight .m { color: #666666 } /* Literal.Number */
+.highlight .s { color: #BA2121 } /* Literal.String */
+.highlight .na { color: #687822 } /* Name.Attribute */
+.highlight .nb { color: #008000 } /* Name.Builtin */
+.highlight .nc { color: #0000FF; font-weight: bold } /* Name.Class */
+.highlight .no { color: #880000 } /* Name.Constant */
+.highlight .nd { color: #AA22FF } /* Name.Decorator */
+.highlight .ni { color: #717171; font-weight: bold } /* Name.Entity */
+.highlight .ne { color: #CB3F38; font-weight: bold } /* Name.Exception */
+.highlight .nf { color: #0000FF } /* Name.Function */
+.highlight .nl { color: #767600 } /* Name.Label */
+.highlight .nn { color: #0000FF; font-weight: bold } /* Name.Namespace */
+.highlight .nt { color: #008000; font-weight: bold } /* Name.Tag */
+.highlight .nv { color: #19177C } /* Name.Variable */
+.highlight .ow { color: #AA22FF; font-weight: bold } /* Operator.Word */
+.highlight .w { color: #bbbbbb } /* Text.Whitespace */
+.highlight .mb { color: #666666 } /* Literal.Number.Bin */
+.highlight .mf { color: #666666 } /* Literal.Number.Float */
+.highlight .mh { color: #666666 } /* Literal.Number.Hex */
+.highlight .mi { color: #666666 } /* Literal.Number.Integer */
+.highlight .mo { color: #666666 } /* Literal.Number.Oct */
+.highlight .sa { color: #BA2121 } /* Literal.String.Affix */
+.highlight .sb { color: #BA2121 } /* Literal.String.Backtick */
+.highlight .sc { color: #BA2121 } /* Literal.String.Char */
+.highlight .dl { color: #BA2121 } /* Literal.String.Delimiter */
+.highlight .sd { color: #BA2121; font-style: italic } /* Literal.String.Doc */
+.highlight .s2 { color: #BA2121 } /* Literal.String.Double */
+.highlight .se { color: #AA5D1F; font-weight: bold } /* Literal.String.Escape */
+.highlight .sh { color: #BA2121 } /* Literal.String.Heredoc */
+.highlight .si { color: #A45A77; font-weight: bold } /* Literal.String.Interpol */
+.highlight .sx { color: #008000 } /* Literal.String.Other */
+.highlight .sr { color: #A45A77 } /* Literal.String.Regex */
+.highlight .s1 { color: #BA2121 } /* Literal.String.Single */
+.highlight .ss { color: #19177C } /* Literal.String.Symbol */
+.highlight .bp { color: #008000 } /* Name.Builtin.Pseudo */
+.highlight .fm { color: #0000FF } /* Name.Function.Magic */
+.highlight .vc { color: #19177C } /* Name.Variable.Class */
+.highlight .vg { color: #19177C } /* Name.Variable.Global */
+.highlight .vi { color: #19177C } /* Name.Variable.Instance */
+.highlight .vm { color: #19177C } /* Name.Variable.Magic */
+.highlight .il { color: #666666 } /* Literal.Number.Integer.Long */
+body{max-width:40rem;font:19px/1.75 "Iowan Old Style","Palatino Linotype",Palatino,Georgia,"Times New Roman",serif;color:#2a2118;background:#fdfcf9}
+h1,h2,h3,h4{font-weight:700;line-height:1.2;margin:2.4rem 0 .8rem;letter-spacing:-.015em}
+h1{font-size:2.8rem;margin-top:0;line-height:1.1} h2{font-size:1.7rem}
+h3{font-size:1.3rem;font-style:italic;font-weight:600}
+h1 + p::first-letter{float:left;font-size:3.4em;line-height:.85;padding:.06em .1em 0 0;font-weight:700}
+a{color:#7a2e1b;text-underline-offset:.15em}
+code{background:#f1ece2;padding:.1em .3em;border-radius:3px;font:.82em ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+pre{background:#f4efe6;padding:1rem 1.2rem;border-radius:4px;line-height:1.5;font-size:.88rem}
+pre code{background:none;padding:0;font-size:1em}
+.highlight{background:#f4efe6;border-radius:4px}
+blockquote{margin:1.6rem 0;padding:0 1.4rem;border-left:2px solid #2a2118;font-style:italic;font-size:1.08em}
+th,td{border-bottom:1px solid #d9d0bf;padding:.5rem .7rem;text-align:left}
+th{border-bottom:2px solid #2a2118}
+hr{border:0;text-align:center;margin:2.5rem 0}
+hr::after{content:"* * *";letter-spacing:.6em;color:#8a7d68}
+
+@page{margin:16mm}
+@media print{
+  .mf-copy{display:none !important}
+  html,body{background:#fff !important;color:#111 !important}
+  body{max-width:none !important;margin:0 !important;padding:0 !important;font-size:11pt !important}
+  a{color:#111 !important;text-decoration:underline}
+  pre,pre code,.highlight,.highlight pre,.highlight code{white-space:pre-wrap !important;overflow-wrap:anywhere !important;word-break:break-word !important;overflow:visible !important}
+  pre,.highlight{background:#f6f8fa !important;color:#111 !important;border:1px solid #d0d7de !important}
+  .highlight pre{border:0 !important;background:none !important}
+  code{background:#eef0f2 !important;color:#111 !important}
+  pre code,.highlight code{background:none !important}
+  table{display:table !important;width:100% !important;table-layout:auto}
+  th,td{border-color:#999 !important;overflow-wrap:anywhere}
+  th{background:#eef0f2 !important;color:#111 !important}
+  tr:nth-child(2n){background:none !important}
+  blockquote{color:#333 !important;border-color:#999 !important}
+  h1,h2,h3,h4{color:#111 !important;border-color:#ccc !important;break-after:avoid}
+  hr{border-color:#ccc !important;background:#ccc !important}
+  tr,img,blockquote,figure{break-inside:avoid}
+  *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+}
+</style>
+</head>
+<body>
+<h1 id="zaphalt-user-manual">Zaphalt User Manual</h1>
+<p><strong>Zaphalt – zap it, then halt.</strong> A charge alarm for Android. It rings the moment your phone reaches the battery level you choose, so you can unplug before the battery sits at 100% for hours.</p>
+<p>Works on Android 8.0 or newer. No internet needed for the alarm itself.</p>
+<p><a href="https://www.facebook.com">Official Webpage</a></p>
+<p><a href="https://www.drive.google.com">Download</a></p>
+<hr />
+<h2 id="1-why-use-zaphalt">1. Why use Zaphalt?</h2>
+<p>Phones stop charging at 100%, so they don't really "overcharge". The wear comes from <strong>sitting at 100% for a long time</strong> and from <strong>heat</strong>. Zaphalt lets you pick a gentler level (80–90% is a good choice) and tells you when to unplug.</p>
+<p><strong>Tip:</strong> Keeping your battery between 20% and 80% is the sweet spot. Use the full 100% only when you really need it.</p>
+<hr />
+<h2 id="2-installing">2. Installing</h2>
+<ol>
+<li>Copy the <strong>Zaphalt APK</strong> to your phone (USB, Google Drive, WhatsApp) and tap it.</li>
+<li>If Android says your phone isn't allowed to install unknown apps from this source, tap <strong>Settings</strong>, switch on <strong>Allow from this source</strong>, go back and tap <strong>Install</strong>.</li>
+<li>If <strong>Play Protect</strong> warns about an unrecognized app, tap <strong>More details</strong>, then <strong>Install anyway</strong>. This message appears for any app outside the Play Store.</li>
+<li>Tap <strong>Open</strong>.</li>
+</ol>
+<p><strong>Updating:</strong> install the new APK over the old one. Your settings stay.
+<strong>Uninstalling:</strong> long-press the app icon, choose <strong>App info</strong>, then <strong>Uninstall</strong>.</p>
+<hr />
+<h2 id="3-first-time-setup-2-minutes">3. First-time setup (2 minutes)</h2>
+<ol>
+<li><strong>Allow notifications</strong> when Android asks. Without them you won't see the alarm screen.</li>
+<li>On the <strong>Live</strong> tab, switch <strong>Monitoring</strong> on. A small notification saying "Zaphalt is watching your battery" means it works.</li>
+<li>If a yellow <strong>Finish setup for reliable alarms</strong> card appears, tap <strong>Allow</strong> (notifications) and <strong>Fix</strong> (battery optimization). The card disappears when you're done.</li>
+<li>Tap <strong>Test alarm</strong> to check you can hear it. Tap <strong>Stop alarm</strong> to silence it.</li>
+<li>Plug in your charger. Done.</li>
+</ol>
+<hr />
+<h2 id="4-the-four-tabs">4. The four tabs</h2>
+<table>
+<thead>
+<tr>
+<th>Tab</th>
+<th>What it does</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>⚡ <strong>Live</strong></td>
+<td>Shows your battery percentage, voltage and temperature. Switch Monitoring on or off, set your <strong>Alarm level</strong>, and test or stop the alarm.</td>
+</tr>
+<tr>
+<td>📍 <strong>Where</strong></td>
+<td>Live map, place search, directions and an offline radar. Also where you save your office.</td>
+</tr>
+<tr>
+<td>⚙️ <strong>Settings</strong></td>
+<td>Voice, low-battery reminder, heat warning, Overnight mode, location options and battery diagnostics. Every change saves instantly.</td>
+</tr>
+<tr>
+<td>📖 <strong>Guide</strong></td>
+<td>Animated help inside the app, with a quick-start checklist.</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="5-setting-your-alarm-level">5. Setting your alarm level</h2>
+<p>On the <strong>Live</strong> tab, drag the <strong>Alarm level</strong> slider (50% to 100%). When your battery reaches that number while charging, the alarm goes off.</p>
+<p><strong>When the alarm rings:</strong>
+- Loud sound (it uses your phone's <strong>alarm volume</strong>, not media volume)
+- Vibration
+- A spoken message: "Battery full, please unplug the charger"</p>
+<p><strong>To stop it:</strong> tap <strong>Stop alarm</strong>, or just <strong>unplug the charger</strong>. The alarm stops by itself and re-arms for your next charge.</p>
+<hr />
+<h2 id="6-overnight-mode">6. Overnight mode 🌙</h2>
+<p>Overnight mode keeps your phone from waking you with a loud alarm, and from sitting at a high charge all night.</p>
+<h3 id="what-is-the-night-limit">What is the "Night limit"?</h3>
+<blockquote>
+<p><strong>The Night limit is a lower battery level that Zaphalt uses only while you are asleep.</strong></p>
+<p>Your normal <strong>Alarm level</strong> might be 90%. At night you'd probably rather your phone stop charging earlier, because sleeping with a battery parked at 100% for hours is the hardest thing on it. So during your sleep hours Zaphalt uses the <strong>Night limit</strong> instead (80% by default).</p>
+</blockquote>
+<p><strong>Simple rule:</strong> while you sleep, Zaphalt uses whichever number is <strong>lower</strong>, your Alarm level or your Night limit.</p>
+<table>
+<thead>
+<tr>
+<th>Alarm level</th>
+<th>Night limit</th>
+<th>Alarm goes off at (while asleep)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>90%</td>
+<td>80%</td>
+<td><strong>80%</strong></td>
+</tr>
+<tr>
+<td>85%</td>
+<td>90%</td>
+<td><strong>85%</strong></td>
+</tr>
+<tr>
+<td>100%</td>
+<td>70%</td>
+<td><strong>70%</strong></td>
+</tr>
+</tbody>
+</table>
+<p>During sleep hours the alarm is <strong>quiet</strong>: it vibrates and speaks, but it <strong>never rings</strong>. If you turn off <strong>Also speak while I sleep</strong>, it only vibrates.</p>
+<h3 id="setting-your-sleep-time">Setting your sleep time</h3>
+<ol>
+<li>Turn on <strong>Overnight mode</strong> in Settings.</li>
+<li>Choose how your week looks:
+   - <strong>Same every day</strong>
+   - <strong>Sun – Thu + Sat, Friday different</strong>
+   - <strong>Sun – Thu, Fri &amp; Sat different</strong>
+   - <strong>Set each day separately</strong></li>
+<li>Set <strong>Sleep from</strong> and <strong>Wake at</strong> using the hour, minute and AM/PM boxes. (On the website demo you can drag the 🌙 and ☀️ handles around the clock instead.)</li>
+<li>Set your <strong>Night limit</strong> with the slider.</li>
+<li>Choose whether you want <strong>Also speak while I sleep</strong> on or off.</li>
+</ol>
+<blockquote>
+<p>The schedule belongs to the day you <strong>wake up</strong>. Friday's wake time covers Thursday night.</p>
+</blockquote>
+<h3 id="testing-it">Testing it</h3>
+<p>Tap <strong>🔔 Test sleep-hours alert</strong> to feel and hear exactly what the alarm will do while you sleep. On the website demo, tap <strong>⏹ Stop alarm</strong> to cut the voice short at any time.</p>
+<hr />
+<h2 id="7-other-alerts">7. Other alerts</h2>
+<ul>
+<li><strong>🪫 Low-battery reminder.</strong> One nudge to plug in at 20% (you can pick any level from 5% to 40%).</li>
+<li><strong>🔥 Heat warning.</strong> An alert when charging gets hot, by default above 40°C. You get one alert per hot spell. Move the phone somewhere cool or unplug it.</li>
+</ul>
+<hr />
+<h2 id="8-location-profile-no-voice-at-office">8. Location profile: "No voice at office" 📍</h2>
+<p>Save your office once on the <strong>Where</strong> tab (<strong>Set office</strong>). Inside the <strong>200 m zone</strong> around it, the alarm still rings but <strong>does not speak</strong>, so you never embarrass yourself at your desk. Zaphalt checks your location only at the moment an alarm fires.</p>
+<h3 id="how-the-alarm-decides-how-to-behave">How the alarm decides how to behave</h3>
+<p>The first match wins:</p>
+<table>
+<thead>
+<tr>
+<th>Where / when</th>
+<th>What happens</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>At your office</td>
+<td>🔊 Sound and vibration, no voice</td>
+</tr>
+<tr>
+<td>During sleep hours</td>
+<td>📳 Vibration and voice, never rings (vibration only if sleep voice is off)</td>
+</tr>
+<tr>
+<td>Anywhere else</td>
+<td>🔊 Sound, vibration and voice</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="9-the-where-tab">9. The Where tab 🗺️</h2>
+<ul>
+<li><strong>Search:</strong> type a place name, or coordinates such as <code>23.87, 90.38</code>.</li>
+<li><strong>Five map styles:</strong> Streets, Bright, Light, Satellite, Hybrid.</li>
+<li><strong>Controls:</strong> zoom (+ / −), compass, 3D tilt, and a locate-me button.</li>
+<li><strong>Gestures:</strong> drag to move, pinch or double-tap to zoom, two-finger twist to rotate, two-finger drag to tilt.</li>
+<li><strong>Directions:</strong> choose how you want to get there and see the route and estimated time. There is no live traffic.</li>
+<li><strong>Radar (works offline):</strong> a rotating sweep with range rings, a trail of where you've walked and a dashed line to your office. Choose <strong>North up</strong> or <strong>Heading up</strong>, zoom in or out, or <strong>Clear trail</strong>.</li>
+</ul>
+<p><strong>Internet is needed only here</strong>, for the map picture, place search and directions. Searching and routing send the words you type and the points being routed to free OpenStreetMap-based services. The alarm, monitoring, notifications and radar all work offline.</p>
+<hr />
+<h2 id="10-home-screen-widget-and-quick-settings-tile">10. Home-screen widget and Quick Settings tile</h2>
+<h3 id="widget">Widget</h3>
+<ol>
+<li>Long-press an empty area of your home screen.</li>
+<li>Tap <strong>Widgets</strong>, find <strong>Zaphalt</strong>, and drag it onto the home screen.</li>
+<li>It shows your battery percentage and <strong>ON</strong> or <strong>OFF</strong>. Tap it to switch monitoring.</li>
+</ol>
+<h3 id="quick-settings-tile">Quick Settings tile</h3>
+<ol>
+<li>Swipe down twice from the top of the screen.</li>
+<li>Tap the <strong>pencil (Edit)</strong> icon.</li>
+<li>Drag the <strong>Zaphalt</strong> tile into your active tiles.</li>
+<li>Tap the tile to switch monitoring on or off. It lights up when on.</li>
+</ol>
+<p>If your phone blocks starting from the widget or tile, open Zaphalt and use the <strong>Monitoring</strong> switch instead.</p>
+<hr />
+<h2 id="11-battery-diagnostics">11. Battery diagnostics</h2>
+<p>In <strong>Settings</strong>, battery diagnostics shows the live numbers your phone reports: current (mA), power (W), voltage, temperature, level, charge stored, average current and charging status.</p>
+<ul>
+<li>A <strong>+</strong> sign means charging. A <strong>−</strong> sign means draining.</li>
+<li><strong>Show raw readings</strong> displays the exact values from Android.</li>
+<li><strong>Copy readings</strong> puts them on your clipboard so you can paste them into a message when asking for help.</li>
+<li><strong>Re-detect current unit &amp; sign</strong> fixes numbers that look wrong (some phones report them differently).</li>
+</ul>
+<hr />
+<h2 id="12-notifications-youll-see">12. Notifications you'll see</h2>
+<table>
+<thead>
+<tr>
+<th>Notification</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Zaphalt is watching your battery</strong> (quiet)</td>
+<td>Monitoring is on. Android requires this while the app runs in the background.</td>
+</tr>
+<tr>
+<td><strong>Unplug the charger!</strong> (full screen)</td>
+<td>The alarm is ringing. Tap <strong>Stop alarm</strong> to silence it.</td>
+</tr>
+<tr>
+<td><strong>Battery low (20%)</strong></td>
+<td>Time to plug in.</td>
+</tr>
+<tr>
+<td><strong>Battery is hot (41.0°C)</strong></td>
+<td>Move the phone somewhere cool or unplug it.</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="13-troubleshooting">13. Troubleshooting</h2>
+<h3 id="no-sound">🔇 No sound</h3>
+<ul>
+<li>Raise the <strong>Alarm volume</strong> in your phone's Sound settings. Media volume doesn't affect it.</li>
+<li>Make sure <strong>Do Not Disturb</strong> isn't set to "Total silence".</li>
+<li>Tap <strong>Test alarm</strong> to check.</li>
+</ul>
+<h3 id="alarm-stops-working-when-the-screen-is-off">💤 Alarm stops working when the screen is off</h3>
+<p>Your phone's battery saver is putting Zaphalt to sleep.
+- Set Zaphalt's battery use to <strong>Unrestricted</strong> (or "No restrictions").
+- Tap <strong>Fix</strong> on the yellow setup card in the Live tab.</p>
+<p><strong>Xiaomi · Redmi · Poco:</strong> enable <strong>Autostart</strong> for Zaphalt and set Battery saver to <strong>No restrictions</strong>.
+<strong>Samsung:</strong> remove Zaphalt from <strong>Sleeping apps</strong> and <strong>Deep sleeping apps</strong>, and set battery use to <strong>Unrestricted</strong>.
+<strong>Oppo · Realme · Vivo · OnePlus:</strong> allow <strong>Auto-launch</strong> / <strong>Background activity</strong> for Zaphalt and disable battery optimization for it.</p>
+<h3 id="no-voice">🗣️ No voice</h3>
+<ul>
+<li>Install or enable a text-to-speech engine, for example <strong>Speech Services by Google</strong>, in your phone's <strong>Text-to-speech</strong> settings, and download your language.</li>
+<li>Check <strong>Voice announcement</strong> is on in Zaphalt's Settings.</li>
+<li>Remember the voice is off at your saved office. During sleep hours it also needs <strong>Also speak while I sleep</strong> switched on.</li>
+</ul>
+<h3 id="no-notifications">🔔 No notifications</h3>
+<ul>
+<li>Open Android Settings → Apps → Zaphalt → Notifications and turn them on.</li>
+<li>Tap <strong>Allow</strong> on the yellow setup card in the Live tab.</li>
+</ul>
+<hr />
+<h2 id="14-faq">14. FAQ</h2>
+<p><strong>Does my phone really overcharge?</strong>
+No. Modern phones stop charging at 100%. The harm comes from staying at 100% for a long time and from heat, which is why Zaphalt lets you choose a lower level.</p>
+<p><strong>Does Zaphalt drain my battery?</strong>
+It is built to be light. It wakes only when Android reports a battery change and loads the voice engine only when it needs to speak.</p>
+<p><strong>Does it work after a restart or with wireless chargers?</strong>
+Yes to both. If Monitoring was on before the restart it comes back on, and any charging method Android reports as charging works.</p>
+<p><strong>Can I change the alarm sound?</strong>
+Zaphalt uses your phone's default alarm sound. Change it in your phone's Sound settings.</p>
+<p><strong>Does it need internet?</strong>
+Only on the Where screen. The alarm, monitoring, notifications and radar work offline.</p>
+<p><strong>Android warns me when I install the APK.</strong>
+That message appears for any app that is not from the Play Store. Allow installs from your browser or file manager, then tap <strong>More details</strong> and <strong>Install anyway</strong> on the Play Protect prompt.</p>
+<hr />
+<p><em>Made with ⚡ by Shukdev. Map data © OpenStreetMap contributors · Tiles by OpenFreeMap.</em></p>
+<script>
+(function(){
+  function fallback(t){
+    var a=document.createElement('textarea');a.value=t;a.style.cssText='position:fixed;opacity:0';
+    document.body.appendChild(a);a.select();var ok=false;
+    try{ok=document.execCommand('copy')}catch(e){}
+    a.remove();return ok?Promise.resolve():Promise.reject();
+  }
+  function copy(t){
+    if(navigator.clipboard&&window.isSecureContext){return navigator.clipboard.writeText(t).catch(function(){return fallback(t)})}
+    return fallback(t);
+  }
+  document.addEventListener('click',function(e){
+    var b=e.target.closest&&e.target.closest('.mf-copy');if(!b)return;
+    var pre=b.parentNode.querySelector('pre');if(!pre)return;
+    var t=pre.textContent.replace(/\n$/,'');
+    copy(t).then(function(){b.textContent='Copied!';b.className='mf-copy done'},
+                 function(){b.textContent='Failed';b.className='mf-copy fail'});
+    setTimeout(function(){b.textContent='Copy';b.className='mf-copy'},1600);
+  });
+})();
+</script>
+</body>
+</html>
