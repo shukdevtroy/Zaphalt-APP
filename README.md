@@ -4,9 +4,9 @@
 
 Works on Android 8.0 or newer. No internet needed for the alarm itself.
 
-[Official Webpage](https://www.facebook.com)
+[Official Webpage](https://shukdevtroy.github.io/Zaphalt-APP/)
 
-[Download](https://www.drive.google.com)
+[Download ApK](https://drive.google.com/file/d/1fql1Za2nUCnWM1ZM7-IYqqLLYXGIV1vN/view?usp=sharing)
 
 ---
 
