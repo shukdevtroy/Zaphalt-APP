@@ -4,6 +4,10 @@
 
 Works on Android 8.0 or newer. No internet needed for the alarm itself.
 
+[Official Webpage](https://www.facebook.com)
+
+[Download](https://www.drive.google.com)
+
 ---
 
 ## 1. Why use Zaphalt?
