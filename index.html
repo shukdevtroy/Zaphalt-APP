@@ -1,0 +1,782 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Zaphalt – zap it, then halt. The charge alarm for Android</title>
+<meta name="description" content="Zaphalt rings an alarm the moment your Android phone reaches the charge level you choose. Voice alerts, overnight mode, heat warnings, live map, directions and radar.">
+<meta name="theme-color" content="#0B0F14">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' rx='6' fill='%230B0F14'/%3E%3Cpath fill='%233DFFA2' d='M11 21h-1l1-7H7.5c-.58 0-.57-.32-.38-.66C8.48 10.94 10.42 7.54 13 3h1l-1 7h3.5c.49 0 .56.33.47.51C12.96 17.55 11 21 11 21z'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,800&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0B0F14;--sf:#131A22;--sv:#1B2530;--ol:#263341;--tx:#E8EEF5;--mu:#9FB0C3;--mint:#3DFFA2;--cy:#00D1FF;--am:#FFB020;--rd:#FF5C5C;--on:#00391E;color-scheme:dark}
+@media(prefers-color-scheme:light){:root{--bg:#F4F8FB;--sf:#fff;--sv:#E6EEF4;--ol:#D5E0E8;--tx:#0B0F14;--mu:#516375;--mint:#00A86B;--cy:#0088CC;--am:#E69100;--rd:#D93025;--on:#fff;color-scheme:light}}
+*{box-sizing:border-box;margin:0}
+html{scroll-behavior:smooth;scroll-padding-top:76px}
+body{background:var(--bg);color:var(--tx);font:400 17px/1.6 "Instrument Sans",system-ui,sans-serif;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+h1,h2,h3{font-family:"Bricolage Grotesque","Instrument Sans",system-ui,sans-serif;font-weight:800;line-height:1.02;letter-spacing:-.025em}
+a{color:inherit}
+button{font-family:inherit}
+:focus-visible{outline:3px solid var(--cy);outline-offset:3px;border-radius:8px}
+.w{max-width:1120px;margin:0 auto;padding:0 22px}
+section{padding:92px 0}
+.mu{color:var(--mu)}
+.g{background:linear-gradient(100deg,var(--mint),var(--cy));-webkit-background-clip:text;background-clip:text;color:transparent}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+/* nav + cable */
+nav{position:sticky;top:0;z-index:30;backdrop-filter:blur(14px);background:color-mix(in srgb,var(--bg) 78%,transparent);border-bottom:1px solid var(--ol)}
+nav .w{display:flex;align-items:center;gap:22px;height:64px}
+nav:after{content:"";position:absolute;left:0;bottom:-1px;height:3px;width:var(--p,0%);background:linear-gradient(90deg,var(--mint),var(--cy));box-shadow:0 0 14px var(--mint)}
+.lg{display:flex;align-items:center;gap:10px;font:800 21px "Bricolage Grotesque",sans-serif;text-decoration:none;margin-right:auto}
+.lg i{width:34px;height:34px;border-radius:10px;background:#0B0F14;display:grid;place-items:center;border:1px solid var(--ol)}
+.lg svg{width:18px;fill:#3DFFA2}
+nav a.l{text-decoration:none;color:var(--mu);font-size:15px}nav a.l:hover{color:var(--tx)}
+.pc{font:600 13px "Instrument Sans";padding:4px 10px;border-radius:50px;border:1px solid var(--ol);color:var(--mint);min-width:62px;text-align:center}
+.btn{display:inline-flex;align-items:center;gap:10px;padding:14px 24px;border-radius:50px;font:600 16px "Instrument Sans",sans-serif;text-decoration:none;border:1px solid transparent;cursor:pointer;transition:transform .15s}
+.btn:active{transform:scale(.97)}
+.p{background:linear-gradient(100deg,var(--mint),var(--cy));color:#00241a}
+.s{background:var(--sv);color:var(--tx);border-color:var(--ol)}
+nav .btn{padding:9px 18px;font-size:14px}
+@media(max-width:900px){nav a.l{display:none}}
+.cable{position:fixed;left:16px;top:96px;bottom:28px;width:8px;border-radius:8px;background:var(--sv);border:1px solid var(--ol);z-index:5;display:none}
+.cable i{position:absolute;left:0;right:0;top:0;height:var(--p,0%);border-radius:8px;background:linear-gradient(180deg,var(--cy),var(--mint));box-shadow:0 0 16px var(--mint)}
+.cable b{position:absolute;left:50%;top:var(--p,0%);width:18px;height:18px;margin:-9px 0 0 -9px;border-radius:50%;background:var(--mint);box-shadow:0 0 0 5px color-mix(in srgb,var(--mint) 25%,transparent),0 0 22px var(--mint)}
+@media(min-width:1260px){.cable{display:block}}
+/* hero */
+.hero{padding:56px 0 40px;position:relative}
+.hero:before{content:"";position:absolute;inset:-120px -10% auto auto;width:640px;height:640px;background:radial-gradient(circle,color-mix(in srgb,var(--mint) 22%,transparent),transparent 65%);pointer-events:none}
+.hg{display:grid;grid-template-columns:1.05fr .95fr;gap:40px;align-items:center;position:relative}
+h1{font-size:clamp(52px,8.4vw,104px)}
+.lead{font-size:20px;max-width:30em;margin:22px 0 30px}
+.cta{display:flex;flex-wrap:wrap;gap:12px}
+.meta{margin-top:22px;font-size:14px;color:var(--mu)}
+@media(max-width:900px){.hg{grid-template-columns:1fr}}
+/* phone */
+.phwrap{display:grid;justify-items:center;gap:14px}
+.phone{position:relative;width:min(340px,100%);aspect-ratio:340/690;border-radius:50px;padding:11px;background:linear-gradient(160deg,#2b3644,#0a0e13);box-shadow:0 40px 90px -30px color-mix(in srgb,var(--mint) 45%,transparent),inset 0 0 0 2px #3a4756}
+.phone.shake{animation:shk .45s linear 2}
+#sleep .ctl.shk{animation:shk .45s linear 4}
+@keyframes shk{0%,100%{transform:translateX(0)}20%{transform:translateX(-5px) rotate(-.6deg)}40%{transform:translateX(5px) rotate(.6deg)}60%{transform:translateX(-4px)}80%{transform:translateX(4px)}}
+.scr{position:relative;height:100%;border-radius:40px;background:var(--bg);overflow:hidden;display:flex;flex-direction:column}
+.scr:before{content:"";position:absolute;top:9px;left:50%;width:78px;height:22px;margin-left:-39px;background:#000;border-radius:20px;z-index:6}
+.sb{display:flex;justify-content:space-between;padding:12px 24px 0;font-size:12px;font-weight:600;height:40px}
+.pg{flex:1;overflow-y:auto;padding:6px 14px 12px;scrollbar-width:none}.pg::-webkit-scrollbar{display:none}
+.pg[hidden]{display:none}
+.pg h4{font:800 22px "Bricolage Grotesque";margin:4px 2px 2px}.pg .sm{font-size:12.5px;color:var(--mu);margin:0 2px 10px}
+.bn{display:grid;grid-template-columns:repeat(4,1fr);border-top:1px solid var(--ol);background:var(--sf);padding:6px 6px 10px}
+.bn button{background:none;border:0;color:var(--mu);padding:6px 0;border-radius:16px;font-size:11px;cursor:pointer;display:grid;gap:0;justify-items:center}
+.bn button span{font-size:19px;line-height:1.3}
+.bn button[aria-selected=true]{color:var(--tx);background:color-mix(in srgb,var(--mint) 18%,transparent)}
+.mon{display:flex;justify-content:space-between;align-items:center;padding:10px 14px;border-radius:18px;background:linear-gradient(90deg,color-mix(in srgb,var(--mint) 22%,transparent),color-mix(in srgb,var(--cy) 22%,transparent));cursor:pointer;border:0;width:100%;color:var(--tx);text-align:left}
+.mon b{display:block;font-size:14.5px}.mon small{color:var(--mu);font-size:12px}
+.sw{width:46px;height:28px;border-radius:30px;background:var(--mint);position:relative;flex:none;transition:background .2s}.sw:after{content:"";position:absolute;right:4px;top:4px;width:20px;height:20px;border-radius:50%;background:var(--on);transition:all .2s}
+.sw.off{background:var(--sv);border:1px solid var(--ol)}.sw.off:after{right:auto;left:3px;background:var(--mu)}
+.setup{margin:10px 0 0;padding:12px 14px;border-radius:18px;background:color-mix(in srgb,var(--am) 18%,var(--sf));border:1px solid color-mix(in srgb,var(--am) 45%,transparent);font-size:13px}
+.setup b{display:block;margin-bottom:6px}
+.sr2{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:4px 0}
+.sr2 button{padding:5px 14px;border-radius:50px;border:0;background:var(--am);color:#2a1a00;font-weight:600;font-size:12.5px;cursor:pointer}
+.ringw{position:relative;width:min(230px,78%);margin:8px auto 2px;aspect-ratio:1}
+.ringw svg{width:100%;display:block}
+.ring-c{position:absolute;inset:0;display:grid;place-content:center;text-align:center}
+.pct{font:800 58px/1 "Bricolage Grotesque",sans-serif}.pct small{font-size:22px;color:var(--mu)}
+.ring-c span{color:var(--mu);font-size:30px}
+#sub{font-size: 15px;margin-bottom:20px}
+.chip{display:inline-block;padding:5px 14px;border-radius:50px;font-weight:600;font-size:13px;background:color-mix(in srgb,var(--mint) 16%,transparent);color:var(--mint)}
+.chip.r{background:color-mix(in srgb,var(--rd) 18%,transparent);color:var(--rd)}
+.mid{text-align:center;display:grid;gap:4px;justify-items:center;font-size:13px}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:10px 0}
+.st{background:var(--sf);border:1px solid var(--ol);border-radius:16px;padding:8px 12px}
+.st small{color:var(--mu);font-size:11.5px;display:block}.st b{font:800 18px "Bricolage Grotesque",sans-serif}
+.sl{display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--mu)}
+.sl input{flex:1;accent-color:var(--mint);min-width:0}
+.sl output{font-weight:600;color:var(--mint);min-width:36px;text-align:right}
+@keyframes pu{50%{opacity:.55}}
+.ringing .pct{color:var(--rd)}.ringing .arc{animation:pu .5s infinite}
+.btns{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
+.btns button,.sm2{padding:11px 6px;border-radius:50px;border:1px solid var(--ol);background:var(--sv);color:var(--tx);font:600 13.5px "Instrument Sans",sans-serif;cursor:pointer}
+.btns button.hot{background:var(--rd);color:#fff;border-color:var(--rd)}
+.notif{position:absolute;left:10px;right:10px;top:38px;z-index:8;background:color-mix(in srgb,var(--sf) 94%,#fff);border:1px solid var(--ol);border-radius:20px;padding:12px 14px;box-shadow:0 14px 40px rgba(0,0,0,.45);transform:translateY(-160%);transition:transform .45s cubic-bezier(.2,1.2,.3,1);font-size:13px}
+.notif.in{transform:none}
+.notif .nh{display:flex;gap:8px;align-items:center;color:var(--mu);font-size:11.5px;margin-bottom:3px}
+.notif .nh i{width:16px;height:16px;border-radius:5px;background:#0B0F14;display:grid;place-items:center}.notif .nh svg{width:10px;fill:#3DFFA2}
+.notif b{display:block;font-size:14.5px}
+.notif button{margin-top:8px;padding:7px 16px;border-radius:50px;border:0;background:var(--rd);color:#fff;font-weight:600;cursor:pointer}
+.hear{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
+.hear button{padding:11px 18px;border-radius:50px;border:1px solid var(--ol);background:var(--sv);color:var(--tx);font:600 14px "Instrument Sans";cursor:pointer}
+.hear button.on{background:var(--mint);color:#00241a;border-color:var(--mint)}
+.cap{font-size:13px;color:var(--mu);text-align:center;max-width:340px}
+/* phone mini pages */
+.mapm{border-radius:18px;overflow:hidden;border:1px solid var(--ol)}
+.mrow{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.mrow button{padding:6px 11px;border-radius:50px;border:1px solid var(--ol);background:var(--sv);color:var(--tx);font:500 12px "Instrument Sans";cursor:pointer}
+.mrow button[aria-pressed=true]{background:var(--mint);color:#00241a;border-color:var(--mint);font-weight:600}
+.row2{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:11px 12px;background:var(--sf);border:1px solid var(--ol);border-radius:16px;margin-bottom:8px;font-size:13.5px;cursor:pointer;width:100%;color:var(--tx);text-align:left}
+.row2 small{display:block;color:var(--mu);font-size:11.5px}
+.ck{display:flex;gap:10px;align-items:flex-start;padding:10px 12px;background:var(--sf);border:1px solid var(--ol);border-radius:16px;margin-bottom:8px;font-size:13px;cursor:pointer;width:100%;color:var(--tx);text-align:left}
+.ck i{flex:none;width:20px;height:20px;border-radius:7px;border:2px solid var(--ol);display:grid;place-items:center;font-style:normal;font-size:12px;color:var(--on)}
+.ck[aria-pressed=true] i{background:var(--mint);border-color:var(--mint)}.ck[aria-pressed=true] span{color:var(--mu);text-decoration:line-through}
+/* headings */
+.h2{font-size:clamp(36px,5vw,58px);max-width:15em}
+.sub{font-size:19px;color:var(--mu);max-width:34em;margin-top:16px}
+.sub2{font-size:16px;color:var(--mu);max-width:44em;margin-top:10px}
+/* steps */
+.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:40px;counter-reset:s}
+.steps div{background:var(--sf);border:1px solid var(--ol);border-radius:24px;padding:22px;counter-increment:s}
+.steps div:before{content:counter(s);display:grid;place-items:center;width:38px;height:38px;border-radius:50%;background:var(--mint);color:#00241a;font:800 18px "Bricolage Grotesque";margin-bottom:14px}
+.steps b{display:block;margin-bottom:4px}.steps p{color:var(--mu);font-size:15px}
+@media(max-width:900px){.steps{grid-template-columns:1fr 1fr}}@media(max-width:520px){.steps{grid-template-columns:1fr}}
+/* bento */
+.bento{display:grid;grid-template-columns:repeat(6,1fr);gap:16px;margin-top:44px}
+.c{background:var(--sf);border:1px solid var(--ol);border-radius:28px;padding:26px;overflow:hidden}
+.c h3{font-size:25px;margin-bottom:8px}.c p{color:var(--mu);font-size:16px}
+.c .e{font-size:28px;display:block;margin-bottom:12px}
+.c4{grid-column:span 4}.c3{grid-column:span 3}.c2{grid-column:span 2}
+.c.hi{background:linear-gradient(135deg,color-mix(in srgb,var(--mint) 16%,var(--sf)),color-mix(in srgb,var(--cy) 12%,var(--sf)))}
+@media(max-width:860px){.bento{grid-template-columns:1fr}.c4,.c3,.c2{grid-column:auto}}
+/* sleep dial */
+.sd{display:grid;grid-template-columns:1fr 1fr;gap:34px;align-items:center;margin-top:44px}
+.dial{background:var(--sf);border:1px solid var(--ol);border-radius:36px;padding:22px;display:grid;justify-items:center;gap:12px}
+.dial svg{width:min(330px,100%);touch-action:none;user-select:none}
+.dial .h{cursor:grab}.dial .h:active{cursor:grabbing}
+.rd{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
+.rd div{background:var(--sv);border-radius:16px;padding:8px 16px;font-size:13px;color:var(--mu)}.rd b{display:block;font-size:19px;color:var(--tx);font-family:"Bricolage Grotesque"}
+.days{display:flex;gap:6px;flex-wrap:wrap;justify-content:center}
+.days button{width:46px;height:46px;border-radius:50%;border:2px solid var(--ol);background:var(--sv);color:var(--tx);font:600 12.5px "Instrument Sans";cursor:pointer}
+.days button[aria-pressed=true]{background:var(--mint);color:#00241a;border-color:var(--mint)}
+.days button.gp{border-color:var(--cy)}
+.opts{display:grid;gap:8px;margin:18px 0}
+.opts label{display:flex;gap:10px;align-items:center;background:var(--sf);border:1px solid var(--ol);border-radius:16px;padding:11px 16px;font-size:15px;cursor:pointer}
+.opts input{accent-color:var(--mint)}
+.opts label:has(input:checked){border-color:var(--mint);background:color-mix(in srgb,var(--mint) 10%,var(--sf))}
+.ctl{display:grid;gap:14px;background:var(--sf);border:1px solid var(--ol);border-radius:24px;padding:18px 20px}
+.ctl .sl{font-size:15px}
+.tog{display:flex;justify-content:space-between;align-items:center;gap:12px;font-size:15px}
+.tg{border:0;background:none;cursor:pointer;padding:0}
+.eff{font-size:14px;color:var(--mu)}.eff b{color:var(--mint)}
+.toast{background:color-mix(in srgb,var(--mint) 12%,var(--sf));border:1px solid color-mix(in srgb,var(--mint) 40%,transparent);border-radius:16px;padding:10px 14px;font-size:14px;margin-top:2px}
+.toast[hidden]{display:none}
+@media(max-width:900px){.sd{grid-template-columns:1fr}}
+/* where */
+.wh{display:grid;grid-template-columns:1fr 1fr;gap:22px;margin-top:44px}
+.pan{background:var(--sf);border:1px solid var(--ol);border-radius:32px;padding:22px}
+.pan h3{font-size:24px;margin:4px 0 6px}.pan>p{color:var(--mu);font-size:15px;margin-bottom:14px}
+.mapbox{position:relative;border-radius:22px;overflow:hidden;border:1px solid var(--ol);perspective:700px;background:#000}
+.mapbox svg{display:block;width:100%;transform-origin:50% 100%;transition:transform .5s}
+.mapbox[data-s=streets]{--land:#efe9da;--road:#fff;--rd2:#e3c98f;--water:#9ccbe8;--park:#bfe0b0;--lab:#5a5a5a}
+.mapbox[data-s=bright]{--land:#f6f3ea;--road:#fff;--rd2:#ffd27a;--water:#7fc6f0;--park:#a6e0a0;--lab:#444}
+.mapbox[data-s=light]{--land:#eceff1;--road:#fff;--rd2:#d6dadd;--water:#d2dde4;--park:#e2e8e4;--lab:#7b8791}
+.mapbox[data-s=satellite]{--land:#4d5a39;--road:transparent;--rd2:transparent;--water:#1f4a63;--park:#2f5a2a;--lab:transparent}
+.mapbox[data-s=hybrid]{--land:#4d5a39;--road:#f2ead0;--rd2:#e8c36a;--water:#1f4a63;--park:#2f5a2a;--lab:#fff}
+.mctl{position:absolute;right:8px;top:8px;display:grid;gap:6px}
+.mctl button{width:34px;height:34px;border-radius:10px;border:0;background:#fff;color:#111;font-weight:700;font-size:15px;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.3)}
+.srch{position:absolute;left:8px;top:8px;right:54px;display:flex;gap:6px;background:#fff;border-radius:12px;padding:3px 3px 3px 10px;box-shadow:0 2px 8px rgba(0,0,0,.3);align-items:center}
+.srch input{flex:1;min-width:0;border:0;outline:0;background:none;font:400 14px "Instrument Sans";color:#111}
+.srch button{border:0;background:none;color:#00805a;font-weight:700;padding:8px;cursor:pointer;font-size:13.5px}
+.mchips{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.mchips button,.tabs button{padding:9px 14px;border-radius:50px;border:1px solid var(--ol);background:var(--sv);color:var(--tx);font:500 14px "Instrument Sans",sans-serif;cursor:pointer}
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+.tabs button[aria-pressed=true],.tabs button[aria-selected=true]{background:var(--mint);color:#00241a;border-color:var(--mint);font-weight:600}
+.gest{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;font-size:13px;color:var(--mu)}
+.gest span{border:1px dashed var(--ol);border-radius:50px;padding:3px 12px}
+.modes{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:12px}
+.modes button{border:2px solid transparent;background:var(--sv);color:var(--tx);border-radius:14px;padding:8px 2px;font-size:11px;cursor:pointer;display:grid;justify-items:center}
+.modes button b{font-size:13px}.modes button[aria-pressed=true]{border-color:var(--mint);background:color-mix(in srgb,var(--mint) 14%,var(--sv))}
+.eta{font:800 30px "Bricolage Grotesque",sans-serif;margin-top:10px}.eta small{font:400 14px "Instrument Sans";color:var(--mu)}
+.rad{display:block;width:100%;background:var(--bg);border-radius:22px;border:1px solid var(--ol)}
+@keyframes sw{to{transform:rotate(360deg)}}
+.sweep{transform-origin:150px 150px;animation:sw 4s linear infinite}
+#rg{transition:transform .6s;transform-origin:150px 150px}
+.lab{transition:transform .6s}
+@media(max-width:860px){.wh{grid-template-columns:1fr}}
+/* diagnostics */
+.dg{display:grid;grid-template-columns:.9fr 1.1fr;gap:48px;align-items:center}
+.dc{background:var(--sf);border:1px solid var(--ol);border-radius:32px;padding:22px;max-width:480px;justify-self:center;width:100%}
+.hero2{border-radius:22px;padding:18px;display:flex;justify-content:space-between;background:linear-gradient(90deg,color-mix(in srgb,var(--mint) 18%,transparent),color-mix(in srgb,var(--cy) 8%,transparent))}
+.hero2 small{color:var(--mu);font-size:13px;display:block}
+.hero2 .big{font:800 34px "Bricolage Grotesque",sans-serif;color:var(--mint)}
+.hero2 .w2{font:800 24px "Bricolage Grotesque",sans-serif;color:var(--mint);text-align:right}
+.mg{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
+.mg div{background:var(--sv);border-radius:16px;padding:10px 14px;font-size:13px;color:var(--mu)}
+.mg b{display:block;color:var(--tx);font-size:17px}
+.raw{margin-top:10px;font:12.5px/1.6 ui-monospace,Menlo,Consolas,monospace;background:var(--bg);border:1px solid var(--ol);border-radius:14px;padding:12px;color:var(--mu);white-space:pre-wrap}
+.raw[hidden]{display:none}
+.dbtn{display:grid;gap:8px;margin-top:12px}
+.dbtn button{padding:11px;border-radius:50px;border:1px solid var(--ol);background:var(--sv);color:var(--tx);font:600 14px "Instrument Sans";cursor:pointer}
+@media(max-width:860px){.dg{grid-template-columns:1fr}}
+/* tables, lists */
+table{width:100%;border-collapse:collapse;margin-top:34px;background:var(--sf);border-radius:24px;overflow:hidden;border:1px solid var(--ol)}
+th,td{text-align:left;padding:16px 22px;border-bottom:1px solid var(--ol);font-size:16px}
+th{font-weight:600;color:var(--mu);font-size:14px}tr:last-child td{border:0}
+.tw{overflow-x:auto}
+.panel{background:var(--sf);border:1px solid var(--ol);border-radius:26px;padding:22px 26px;margin-top:16px}
+.panel ol{padding-left:22px;display:grid;gap:8px;color:var(--mu);font-size:16px}.panel ol b,.panel li b{color:var(--tx)}
+.panel p{color:var(--mu);font-size:16px}
+.panel ul{padding-left:20px;display:grid;gap:7px;color:var(--mu);font-size:16px}
+.ng{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-top:34px}
+.nt{background:var(--sf);border:1px solid var(--ol);border-radius:22px;padding:14px 18px;display:grid;gap:3px}
+.nt small{color:var(--mu);font-size:12.5px}.nt b{font-size:16px}.nt span{color:var(--mu);font-size:14.5px}
+@media(max-width:700px){.ng{grid-template-columns:1fr}}
+.bar{position:relative;height:46px;border-radius:24px;background:linear-gradient(90deg,color-mix(in srgb,var(--rd) 55%,var(--sv)) 0 20%,color-mix(in srgb,var(--mint) 70%,var(--sv)) 20% 80%,color-mix(in srgb,var(--am) 60%,var(--sv)) 80% 100%);margin-top:30px;display:flex;font-size:13px;font-weight:600;color:#06140d}
+.bar span{position:absolute;top:0;bottom:0;display:grid;place-items:center}
+.bn2{display:flex;justify-content:space-between;font-size:12px;color:var(--mu);margin-top:6px}
+.tips{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:26px}
+@media(max-width:800px){.tips{grid-template-columns:1fr}}
+/* faq + footer */
+details{background:var(--sf);border:1px solid var(--ol);border-radius:20px;padding:18px 22px;margin-top:12px}
+summary{cursor:pointer;font-weight:600;list-style:none;display:flex;justify-content:space-between;gap:12px}
+summary:after{content:"+";color:var(--mint);font-size:22px;line-height:1}details[open] summary:after{content:"–"}
+details p{color:var(--mu);margin-top:10px;font-size:16px}
+.fin{text-align:center;padding:100px 0;background:radial-gradient(60% 80% at 50% 100%,color-mix(in srgb,var(--mint) 20%,transparent),transparent)}
+.fin h2{font-size:clamp(44px,8vw,92px)}.fin .cta{justify-content:center;margin-top:30px}
+.fin .full{box-shadow:0 0 0 0 var(--mint);animation:ful 1.6s infinite}
+@keyframes ful{70%{box-shadow:0 0 0 22px transparent}}
+footer{border-top:1px solid var(--ol);padding:28px 0;color:var(--mu);font-size:14px}
+footer .w{display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+</style>
+</head>
+<body>
+<nav><div class="w">
+<a class="lg" href="#top"><i><svg viewBox="0 0 24 24"><path d="M11 21h-1l1-7H7.5c-.58 0-.57-.32-.38-.66C8.48 10.94 10.42 7.54 13 3h1l-1 7h3.5c.49 0 .56.33.47.51C12.96 17.55 11 21 11 21z"/></svg></i>Zaphalt</a>
+<a class="l" href="#how">How</a><a class="l" href="#features">Features</a><a class="l" href="#sleep">Overnight</a><a class="l" href="#where">Where</a><a class="l" href="#diagnostics">Diagnostics</a><a class="l" href="#alarm">Alarm</a><a class="l" href="#install">Install</a><a class="l" href="#privacy">Privacy</a><a class="l" href="#help">Help</a><a class="l" href="#faq">Faq</a>
+<span class="pc" id="pc" aria-label="Page scroll shown as charge level">⚡ 0%</span>
+<a class="btn p" href="#download">Download</a>
+</div></nav>
+<div class="cable" aria-hidden="true"><i></i><b></b></div>
+
+<header class="hero" id="top"><div class="w hg">
+<div>
+<h1>Zap it,<br><span class="g">then halt.</span></h1>
+<p class="lead">Zaphalt watches your Android phone while it charges and rings the moment it reaches the level you choose, so you unplug at the right time. It also warns you when the battery is low or running hot.</p>
+<div class="cta"><a class="btn p" href="https://drive.google.com/file/d/1fql1Za2nUCnWM1ZM7-IYqqLLYXGIV1vN/view?usp=sharing" download>⚡ Download APK</a><a class="btn s" href="#how">See how it works</a><a class="btn s" href="USER_MANUAL.md">Read the user manual</a></div>
+<p class="meta">Version 2.10 · Android 8.0 or newer · No ads, no accounts<br>The phone on the right is a working demo. Tap around the four tabs.</p>
+</div>
+
+<div class="phwrap">
+<div class="phone" id="phone" aria-label="Interactive demo of the Zaphalt app">
+<div class="scr" id="stage">
+<div class="notif" id="notif" role="alert"><div class="nh"><i><svg viewBox="0 0 24 24"><path d="M11 21h-1l1-7H7.5c-.58 0-.57-.32-.38-.66C8.48 10.94 10.42 7.54 13 3h1l-1 7h3.5c.49 0 .56.33.47.51C12.96 17.55 11 21 11 21z"/></svg></i>Zaphalt · now</div><b id="nt">Unplug the charger!</b><span id="nx">Battery is at 90%. Unplug your charger now.</span><br><button id="nstop">Stop alarm</button></div>
+<div class="sb"><span>9:41</span><span>5G ▮▮▮ 🔋</span></div>
+
+<div class="pg" id="p-live" role="tabpanel">
+<button class="mon" id="mon" aria-pressed="true"><div><b>Monitoring</b><small id="runtxt">Running · alarm at 90%</small></div><div class="sw" id="msw"></div></button>
+<div class="setup" id="setup"><b>⚠️ Finish setup for reliable alarms</b>
+<div class="sr2" id="r-n"><span>Notifications are turned off</span><button data-fix="r-n">Allow</button></div>
+<div class="sr2" id="r-b"><span>Battery optimization may stop Zaphalt</span><button data-fix="r-b">Fix</button></div></div>
+<div class="ringw"><svg viewBox="0 0 240 240" aria-hidden="true">
+<defs><linearGradient id="gr" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="var(--mint)"/><stop offset="1" stop-color="var(--cy)"/></linearGradient></defs>
+<circle cx="120" cy="120" r="100" fill="none" stroke="var(--sv)" stroke-width="22"/>
+<circle id="arc" class="arc" cx="120" cy="120" r="100" fill="none" stroke="url(#gr)" stroke-width="22" stroke-linecap="round" stroke-dasharray="628.3" stroke-dashoffset="628.3" transform="rotate(-90 120 120)"/>
+<circle id="dotb" r="8" fill="#fff"/><circle id="dot" r="4.5" fill="var(--mint)"/></svg>
+<div class="ring-c"><div class="pct"><span id="pv">62</span><small>%</small></div><span id="sub">alarm at 90%</span></div></div>
+<div class="mid"><span class="chip" id="chip">⚡ Charging</span><span class="mu" id="eta"></span></div>
+<div class="stats"><div class="st"><small>🔋 Voltage</small><b id="mv">4012 mV</b></div><div class="st"><small>🌡️ Temperature</small><b id="tc">31.4°C</b></div></div>
+<label class="sl">Alarm level<input id="lim" type="range" min="50" max="100" value="90" aria-label="Alarm level"><output id="limv">90%</output></label>
+<div class="btns"><button id="test">🔔 Test alarm</button><button id="stop">🔕 Stop alarm</button></div>
+</div>
+
+<div class="pg" id="p-where" role="tabpanel" hidden>
+<h4>Where am I</h4><p class="sm">Pick a map style. Search, then choose how to get there.</p>
+<div class="mapm"><svg viewBox="0 0 300 190" id="mm" style="display:block;width:100%" aria-hidden="true">
+<rect width="300" height="190" fill="var(--land,#efe9da)"/>
+<g id="mmg"></g></svg></div>
+<div class="mrow" id="mmstyle" role="group" aria-label="Map style"><button aria-pressed="true" data-s="streets">🗺️ Streets</button><button aria-pressed="false" data-s="bright">🌤️ Bright</button><button aria-pressed="false" data-s="light">⚪ Light</button><button aria-pressed="false" data-s="satellite">🛰️ Satellite</button><button aria-pressed="false" data-s="hybrid">🛣️ Hybrid</button></div>
+<p class="sm" style="margin-top:10px">The full map demo is further down the page.</p>
+</div>
+
+<div class="pg" id="p-set" role="tabpanel" hidden>
+<h4>Settings</h4><p class="sm">Every change saves instantly.</p>
+<button class="row2" data-t="1" aria-pressed="true"><span>🗣️ Voice announcement<small>Says “Battery full, please unplug the charger”</small></span><div class="sw"></div></button>
+<button class="row2" data-t="1" aria-pressed="true"><span>🪫 Low-battery reminder<small>Remind me at 20%</small></span><div class="sw"></div></button>
+<button class="row2" data-t="1" aria-pressed="true"><span>🔥 Heat warning<small>Warn above 40°C</small></span><div class="sw"></div></button>
+<button class="row2" data-t="1" aria-pressed="true"><span>🌙 Overnight mode<small>Lower limit, quiet alert</small></span><div class="sw"></div></button>
+<button class="row2" data-t="1" aria-pressed="true"><span>📍 No voice at office<small>Sound only inside the 200 m zone</small></span><div class="sw"></div></button>
+<a class="sm" href="#sleep" style="color:var(--mint)">Try the sleep dial ↓</a>
+</div>
+
+<div class="pg" id="p-guide" role="tabpanel" hidden>
+<h4>📖 Guide</h4><p class="sm">🚀 Quick start. Tap to tick.</p>
+<button class="ck" aria-pressed="false"><i>✓</i><span>Allow notifications</span></button>
+<button class="ck" aria-pressed="false"><i>✓</i><span>Switch Monitoring on</span></button>
+<button class="ck" aria-pressed="false"><i>✓</i><span>Tap Allow running in background</span></button>
+<button class="ck" aria-pressed="false"><i>✓</i><span>Tap Test alarm to hear it</span></button>
+<button class="ck" aria-pressed="false"><i>✓</i><span>Plug in your charger</span></button>
+</div>
+
+<div class="bn" role="tablist" aria-label="App tabs">
+<button role="tab" aria-selected="true" data-p="live"><span>⚡</span>Live</button>
+<button role="tab" aria-selected="false" data-p="where"><span>📍</span>Where</button>
+<button role="tab" aria-selected="false" data-p="set"><span>⚙️</span>Settings</button>
+<button role="tab" aria-selected="false" data-p="guide"><span>📖</span>Guide</button>
+</div>
+</div></div>
+<div class="hear"><button id="hearbtn">🔊 Hear the alarm</button><button id="vibbtn">📳 Shake</button></div>
+<p class="cap" id="hearcap">Plays the alarm sound and speaks the line. Sound stays off until you tap.</p>
+</div>
+</div></header>
+
+<section id="how"><div class="w">
+<h2 class="h2">Phones stop at 100%. The wear comes from staying there.</h2>
+<p class="sub">Sitting full for hours and heat are what age a battery. Pick a gentler level, like 80–90%, and Zaphalt tells you when to unplug.</p>
+<div class="steps">
+<div><b>Plug in</b><p>Switch Monitoring on from the Live tab or the home screen widget.</p></div>
+<div><b>Zaphalt watches</b><p>It wakes only when Android reports a battery change, so it stays light.</p></div>
+<div><b>The alarm rings</b><p>Loud sound, vibration and a spoken “Battery full, please unplug the charger”.</p></div>
+<div><b>Unplug</b><p>The alarm stops by itself and re-arms for your next charge.</p></div>
+</div></div></section>
+
+<section id="features" style="padding-top:0"><div class="w">
+<h2 class="h2">Everything around the alarm, built in.</h2>
+<div class="bento">
+<div class="c c4 hi"><span class="e">🌙</span><h3>Overnight mode</h3><p>A lower limit and a quiet alert while you sleep. The alarm vibrates and speaks but never rings. Group your days four ways, or give every weekday its own sleep time in plain hour, minute and AM/PM boxes. <a href="#sleep" style="color:var(--mint)">Try it below.</a></p></div>
+<div class="c c2"><span class="e">🗣️</span><h3>Voice alerts</h3><p>Hear it from across the room, even when media volume is low. The alarm uses the alarm volume.</p></div>
+<div class="c c2"><span class="e">🪫</span><h3>Low-battery reminder</h3><p>One nudge to plug in at 20%, or any level from 5% to 40%.</p></div>
+<div class="c c2"><span class="e">🔥</span><h3>Heat warning</h3><p>An alert when charging gets hot, by default above 40°C. One alert per hot spell.</p></div>
+<div class="c c2"><span class="e">🧩</span><h3>Widget and tile</h3><p>Switch monitoring on or off with one tap from your home screen or Quick Settings. <a href="#install" style="color:var(--mint)">Setup steps.</a></p></div>
+<div class="c c3"><span class="e">📍</span><h3>Location profiles</h3><p>Save your office once. Inside the 200 m zone the alarm rings without speaking, so you never embarrass yourself at your desk.</p></div>
+<div class="c c3"><span class="e">📖</span><h3>An interactive Guide</h3><p>Animated help inside the app. Drag the alarm slider, move the sleep window on a clock and tap each map control to see what it does.</p></div>
+</div></div></section>
+
+<section id="sleep" style="padding-top:0"><div class="w">
+<h2 class="h2">Drag your night onto the clock.</h2>
+<p class="sub">This is Overnight mode, the way the app does it. Drag the moon and the sun, or focus a handle and use the arrow keys.</p>
+<div class="sd">
+<div class="dial">
+<svg viewBox="0 0 300 300" id="dial" aria-label="24 hour sleep dial">
+<circle cx="150" cy="150" r="112" fill="none" stroke="var(--sv)" stroke-width="30"/>
+<path id="arcs" fill="none" stroke="url(#gr)" stroke-width="30" stroke-linecap="round"/>
+<g id="ticks" fill="var(--mu)" font-size="11" text-anchor="middle"></g>
+<g class="h" id="hs" tabindex="0" role="slider" aria-label="Sleep from" aria-valuemin="0" aria-valuemax="1435"><circle r="19" fill="#0B0F14" stroke="var(--cy)" stroke-width="3"/><text y="6" text-anchor="middle" font-size="18">🌙</text></g>
+<g class="h" id="hw" tabindex="0" role="slider" aria-label="Wake at" aria-valuemin="0" aria-valuemax="1435"><circle r="19" fill="#0B0F14" stroke="var(--am)" stroke-width="3"/><text y="6" text-anchor="middle" font-size="18">☀️</text></g>
+<text x="150" y="140" text-anchor="middle" font-family="Bricolage Grotesque" font-weight="800" font-size="34" fill="var(--tx)" id="dur">6h 30m</text>
+<text x="150" y="164" text-anchor="middle" font-size="13" fill="var(--mu)" id="dgrp">Sun – Thu</text>
+</svg>
+<div class="rd"><div>🌙 Sleep from<b id="rs">12:00 AM</b></div><div>☀️ Wake at<b id="rw">6:30 AM</b></div></div>
+<div class="days" id="days" role="group" aria-label="Days of the week"></div>
+<p class="cap">The schedule belongs to the day you wake up. Friday’s wake time covers Thursday night.</p>
+</div>
+<div>
+<div class="opts" id="grp" role="radiogroup" aria-label="How does your sleep change through the week?">
+<label><input type="radio" name="g" value="same"> Same every day</label>
+<label><input type="radio" name="g" value="fri"> Sun – Thu + Sat, Friday different</label>
+<label><input type="radio" name="g" value="frisat" checked> Sun – Thu, Fri &amp; Sat different</label>
+<label><input type="radio" name="g" value="each"> Set each day separately</label>
+</div>
+<div class="ctl">
+<label class="sl">Night limit<input id="nl" type="range" min="50" max="100" value="80"><output id="nlv">80%</output></label>
+<p class="cap" style="text-align:left;max-width:none">🌙 <b>What is Night limit?</b> It is a lower battery level used only while you sleep. Charging a phone to 100% and leaving it there all night is hard on the battery, so Zaphalt warns you earlier, at this number instead. It never rings, so it won't wake you up suddenly. If your normal Alarm level is lower, that one is used instead.</p>
+<div class="tog"><span>Also speak while I sleep</span><button class="tg" id="nv" role="switch" aria-checked="true" aria-label="Also speak while I sleep"><div class="sw"></div></button></div>
+<div class="eff" id="eff"></div>
+<div style="display:flex;gap:10px;flex-wrap:wrap">
+<button class="btn s" id="tsa" style="justify-content:center;flex:1">🔔 Test sleep-hours alert</button>
+<button class="btn s" id="tsstop" style="justify-content:center;flex:1" hidden>⏹ Stop alarm</button>
+</div>
+<div class="toast" id="tst" hidden></div>
+</div>
+</div></div></div></section>
+
+<section id="where" style="padding-top:0"><div class="w">
+<h2 class="h2">Know where you are. Get where you’re going.</h2>
+<p class="sub">The Where tab pairs a live vector map with an offline radar. The map runs only while the tab is open.</p>
+<div class="wh">
+<div class="pan"><h3>🗺️ Map, search and directions</h3><p>Type a place or coordinates such as <b>23.87, 90.38</b>. Five map styles, zoom, compass, 3D tilt and a locate button, just like the app.</p>
+<div class="mapbox" id="mb" data-s="streets">
+<svg viewBox="0 0 400 270" id="msv" role="img" aria-label="Sample map">
+<g id="mapg">
+<rect width="400" height="270" fill="var(--land)"/>
+<path d="M0 0H130L110 60 40 90 0 70Z" fill="var(--water)"/>
+<path d="M250 150L360 120 400 160V270H280Z" fill="var(--park)"/>
+<g fill="none" stroke-linecap="round"><g stroke="var(--rd2)" stroke-width="12"><path d="M-10 200L120 130 240 160 420 50"/></g>
+<g stroke="var(--road)" stroke-width="8"><path d="M0 70H400M0 160H400M0 235H400M80 0V270M200 0V270M320 0V270M-10 200L120 130 240 160 420 50"/></g></g>
+<g font-size="10" fill="var(--lab)" font-weight="600"><text x="90" y="64">Green Rd</text><text x="205" y="154">Mirpur Rd</text><text x="300" y="196">Park</text><text x="10" y="40" fill="#fff">River</text></g>
+<circle id="oz" cx="320" cy="70" r="30" fill="#3DFFA2" fill-opacity=".22" stroke="#00A86B" stroke-width="2"/>
+<text id="ozt" x="320" y="34" text-anchor="middle" font-size="10" font-weight="700" fill="var(--lab)">🏢 office</text>
+<path id="rt" d="" stroke="#0088CC" stroke-width="6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+<path id="trl" d="M60 250L74 242 86 232 92 224" stroke="#0088CC" stroke-opacity=".4" stroke-width="3" fill="none" stroke-dasharray="2 5"/>
+<circle cx="92" cy="224" r="22" fill="#0088CC" fill-opacity=".18"/><circle cx="92" cy="224" r="8" fill="#0088CC" stroke="#fff" stroke-width="3"/>
+<g id="pin" opacity="0"><path d="M0 0m0-26a14 14 0 0 1 14 14c0 11-14 24-14 24s-14-13-14-24a14 14 0 0 1 14-14z" fill="#FF5C5C"/><circle cy="-12" r="5" fill="#fff"/></g>
+</g></svg>
+<form class="srch" id="sf" autocomplete="off"><span>🔍</span><input id="q" placeholder="Search a place or type lat, lng" aria-label="Search a place or type lat, lng"><button type="button" id="qx" aria-label="Clear">✕</button><button type="submit">Go</button></form>
+<div class="mctl"><button id="zi" aria-label="Zoom in">+</button><button id="zo" aria-label="Zoom out">−</button><button id="cp" aria-label="Compass, point north">🧭</button><button id="td" aria-label="3D tilt">3D</button><button id="lc" aria-label="Locate me">◎</button></div>
+</div>
+<div class="mchips" id="sty" role="group" aria-label="Map style">
+<button data-s="streets" aria-pressed="true">🗺️ Streets</button><button data-s="bright" aria-pressed="false">🌤️ Bright</button><button data-s="light" aria-pressed="false">⚪ Light</button><button data-s="satellite" aria-pressed="false">🛰️ Satellite</button><button data-s="hybrid" aria-pressed="false">🛣️ Hybrid</button>
+</div>
+<div class="mchips"><button id="so">🏢 Set office</button></div>
+<div class="gest"><span>drag to move</span><span>pinch or double-tap to zoom</span><span>two-finger twist to rotate</span><span>two-finger drag to tilt</span></div>
+<div class="modes" id="modes" hidden></div>
+<div class="eta" id="etaw" hidden></div>
+<p class="cap" id="mnote" style="text-align:left;margin-top:8px">Sample map. The app uses live OpenFreeMap tiles and real routing, with no live traffic.</p>
+</div>
+
+<div class="pan"><h3>🎯 Radar, fully offline</h3><p>A rotating sweep, range rings, a trail of where you’ve walked and a dashed line to your office.</p>
+<svg class="rad" viewBox="0 0 300 300" role="img" aria-label="Radar with office zone">
+<g id="rg">
+<g fill="none" stroke="var(--ol)"><circle cx="150" cy="150" r="140"/><circle cx="150" cy="150" r="93"/><circle cx="150" cy="150" r="47"/><path d="M150 10V290M10 150H290"/></g>
+<circle id="roz" fill="var(--mint)" fill-opacity=".2" stroke="var(--mint)"/>
+<path id="rol" stroke="var(--mint)" stroke-dasharray="5 5" fill="none"/>
+<g id="rtr" fill="var(--cy)"></g>
+<g fill="var(--mu)" font-size="11" text-anchor="middle"><text id="r1" x="150" y="106">133 m</text><text id="r2" x="150" y="59">267 m</text><text id="r3" x="150" y="22">400 m</text></g>
+<g font-size="13" font-weight="700" fill="var(--tx)" text-anchor="middle"><text class="lab" id="lN" x="150" y="38">N</text><text class="lab" id="lE" x="262" y="154">E</text><text class="lab" id="lS" x="150" y="272">S</text><text class="lab" id="lW" x="38" y="154">W</text></g>
+</g>
+<g class="sweep"><path d="M150 150L150 10A140 140 0 0 1 249 51Z" fill="var(--mint)" opacity=".16"/><path d="M150 150V10" stroke="var(--mint)" stroke-width="2"/></g>
+<path id="wedge" d="M150 150L128 98A56 56 0 0 1 172 98Z" fill="var(--cy)" opacity=".35" style="transform-origin:150px 150px;transition:transform .6s"/>
+<circle cx="150" cy="150" r="7" fill="var(--cy)" stroke="#fff" stroke-width="2.5"/>
+</svg>
+<div class="tabs" id="rmode" role="group" aria-label="Radar orientation"><button aria-pressed="true" data-m="n">🧭 North up</button><button aria-pressed="false" data-m="h">🧭 Heading up</button><button id="ctr">🧹 Clear trail</button></div>
+<div class="tabs" id="rz" role="group" aria-label="Radar zoom"><button data-z="-1">− Zoom out</button><button data-z="0" aria-pressed="true">Auto</button><button data-z="1">+ Zoom in</button></div>
+<div class="eta" id="rinfo">240 m NE <small>to the office · about 3 min on foot · heading 40° NE</small></div></div>
+</div></div></section>
+
+<section id="diagnostics" style="padding-top:0"><div class="w dg">
+<div><h2 class="h2">The real numbers, straight from your battery.</h2>
+<p class="sub">Battery diagnostics in Settings shows the live current and power your phone reports. A + sign means charging, a − sign means draining. Show the raw readings, copy them into a message when you need help, or re-detect the unit and sign if a number looks off.</p></div>
+<div class="dc" aria-label="Battery diagnostics sample">
+<div class="hero2"><div><small>Current</small><div class="big" id="ma">+2840 mA</div><small>Charging the battery</small></div><div><small style="text-align:right">Power</small><div class="w2" id="pw">+11.37 W</div><small style="text-align:right">volts × amps</small></div></div>
+<div class="mg"><div>🔋 Voltage<b>4.012 V</b></div><div>🌡️ Temperature<b>31.4 °C</b></div><div>📊 Level<b>62 %</b></div><div>🧮 Charge stored<b>3,118 mAh</b></div><div>〰️ Average current<b>+2796 mA</b></div><div>🔌 Status<b>Charging · AC</b></div></div>
+<div class="raw" id="raw" hidden></div>
+<div class="dbtn"><button id="rawb">Show raw readings ▼</button><button id="cpy">📋 Copy readings</button><button id="red">Re-detect current unit &amp; sign</button></div>
+<div class="toast" id="dt" hidden></div>
+</div></div></section>
+
+<section id="alarm" style="padding-top:0"><div class="w">
+<h2 class="h2">The alarm picks its own manners.</h2>
+<p class="sub">Zaphalt checks your location only at the moment an alarm fires. The first match wins.</p>
+<div class="tw"><table><thead><tr><th>Where or when</th><th>What happens</th></tr></thead><tbody>
+<tr><td>At your office</td><td>🔊 Sound and vibration, no voice</td></tr>
+<tr><td>During sleep hours</td><td>📳 Vibration and voice, never rings (vibration only if you turn sleep voice off)</td></tr>
+<tr><td>Anywhere else</td><td>🔊 Sound, vibration and voice</td></tr></tbody></table></div>
+<p class="sub">Notifications you’ll see.</p>
+<div class="ng">
+<div class="nt"><small>Zaphalt · quiet</small><b>Zaphalt is watching your battery</b><span>Monitoring is on. Android requires this while the app runs in the background.</span></div>
+<div class="nt"><small>Zaphalt · full screen</small><b>Unplug the charger!</b><span>The alarm is ringing. Tap Stop alarm to silence it.</span></div>
+<div class="nt"><small>Zaphalt</small><b>Battery low (20%)</b><span>Time to plug in.</span></div>
+<div class="nt"><small>Zaphalt</small><b>Battery is hot (41.0°C)</b><span>Move the phone somewhere cool or unplug it.</span></div>
+</div></section>
+
+<section id="install" style="padding-top:0"><div class="w">
+<h2 class="h2">Installed in two minutes.</h2>
+<p class="sub">Pick what you want to set up.</p>
+<div class="tabs" id="itabs" role="tablist" aria-label="Setup guides">
+<button role="tab" aria-selected="true" data-i="i1">📲 Install</button><button role="tab" aria-selected="false" data-i="i2">🚀 First-time setup</button><button role="tab" aria-selected="false" data-i="i3">🧩 Widget</button><button role="tab" aria-selected="false" data-i="i4">⚡ Quick Settings tile</button></div>
+<div class="panel" id="i1"><ol>
+<li>Copy the <b>Zaphalt APK</b> to your phone (USB, Google Drive, WhatsApp) and tap it.</li>
+<li>If Android says your phone isn’t allowed to install unknown apps from this source, tap <b>Settings</b>, switch on <b>Allow from this source</b>, go back and tap <b>Install</b>.</li>
+<li>If <b>Play Protect</b> warns about an unrecognized app, tap <b>More details</b> then <b>Install anyway</b>. It appears for any app outside the Play Store.</li>
+<li>Tap <b>Open</b>.</li></ol>
+<p style="margin-top:12px"><b>Updating:</b> install the new APK over the old one and your settings stay. <b>Uninstalling:</b> long-press the icon, choose App info, then Uninstall.</p></div>
+<div class="panel" id="i2" hidden><ol>
+<li><b>Allow notifications</b> when Android asks. Without them you won’t see the alarm screen.</li>
+<li>On the Live tab, switch <b>Monitoring</b> on. A small “Zaphalt is watching your battery” notification means it works.</li>
+<li>If the yellow <b>Finish setup for reliable alarms</b> card appears, tap <b>Allow</b> for notifications and <b>Fix</b> for battery optimization. It disappears once you’re done.</li>
+<li>Tap <b>Test alarm</b> to check you can hear it, and <b>Stop alarm</b> to silence it.</li>
+<li>Plug in your charger. Done.</li></ol></div>
+<div class="panel" id="i3" hidden><ol>
+<li>Long-press an empty area of your home screen.</li>
+<li>Tap <b>Widgets</b>, find <b>Zaphalt</b>, and drag it onto the home screen.</li>
+<li>It shows your battery percentage and <b>ON</b> or <b>OFF</b>. Tap it to switch monitoring.</li></ol>
+<p style="margin-top:12px">If your phone blocks starting from a widget, open Zaphalt and use the Monitoring switch.</p></div>
+<div class="panel" id="i4" hidden><ol>
+<li>Swipe down twice from the top of the screen to open Quick Settings.</li>
+<li>Tap the <b>pencil (Edit)</b> icon.</li>
+<li>Drag the <b>Zaphalt</b> tile into your active tiles.</li>
+<li>Tap the tile to switch monitoring on or off. It lights up when on.</li></ol>
+<p style="margin-top:12px">If your phone blocks starting from the tile, Zaphalt opens so you can switch it on there.</p></div>
+</div></section>
+
+<!-- <section id="notifications" style="padding-top:0"><div class="w">
+<h2 class="h2">Notifications you’ll see.</h2>
+<div class="ng">
+<div class="nt"><small>Zaphalt · quiet</small><b>Zaphalt is watching your battery</b><span>Monitoring is on. Android requires this while the app runs in the background.</span></div>
+<div class="nt"><small>Zaphalt · full screen</small><b>Unplug the charger!</b><span>The alarm is ringing. Tap Stop alarm to silence it.</span></div>
+<div class="nt"><small>Zaphalt</small><b>Battery low (20%)</b><span>Time to plug in.</span></div>
+<div class="nt"><small>Zaphalt</small><b>Battery is hot (41.0°C)</b><span>Move the phone somewhere cool or unplug it.</span></div>
+</div></div></section> -->
+
+<section style="padding-top:0"><div class="w">
+<h2 class="h2">Tips for a healthier battery.</h2>
+<p class="sub">Keep it between 20% and 80% when you can. Use the full 100% only when you need it.</p>
+<div class="bar" aria-label="Charge zones"><span style="left:0;width:20%">Low</span><span style="left:20%;width:60%">The sweet spot · 20–80%</span><span style="left:80%;width:20%">Full</span></div>
+<div class="bn2"><span>0%</span><span>20%</span><span>80%</span><span>100%</span></div>
+<div class="tips">
+<div class="c"><span class="e">🧊</span><h3>Dodge heat</h3><p>Avoid charging under a pillow or in direct sun. Take thick cases off if the phone gets warm.</p></div>
+<div class="c"><span class="e">🎯</span><h3>Aim at 80–90%</h3><p>Set your alarm there. The wear comes from sitting at 100% for hours, not from reaching it.</p></div>
+<div class="c"><span class="e">🌙</span><h3>Use Overnight mode</h3><p>You won’t be woken up, and your battery won’t be parked at 100% all night.</p></div>
+</div></div></section>
+
+<section id="privacy" style="padding-top:0"><div class="w">
+<h2 class="h2">Private by design.</h2>
+<div class="bento">
+<div class="c c2"><span class="e">🚫</span><h3>No ads, no accounts</h3><p>Open it and use it. Nothing to sign up for.</p></div>
+<div class="c c2"><span class="e">📱</span><h3>Stays on your phone</h3><p>Settings, your saved office and battery data never leave the device.</p></div>
+<div class="c c2"><span class="e">🌐</span><h3>Internet only on Where</h3><p>The map, place search and directions need it. Searching and routing send the words you type and the points being routed to free OpenStreetMap-based services. The alarm and the radar work offline.</p></div>
+</div></div></section>
+
+<section id="help" style="padding-top:0"><div class="w" style="max-width:900px">
+<h2 class="h2">Something not working?</h2>
+<p class="sub">Menu names differ between phone brands. Pick yours.</p>
+<div class="tabs" id="ttabs" role="tablist" aria-label="Troubleshooting">
+<button role="tab" aria-selected="true" data-i="t1">🔇 No sound</button><button role="tab" aria-selected="false" data-i="t2">💤 Stops with screen off</button><button role="tab" aria-selected="false" data-i="t3">Xiaomi · Redmi · Poco</button><button role="tab" aria-selected="false" data-i="t4">Samsung</button><button role="tab" aria-selected="false" data-i="t5">Oppo · Realme · Vivo · OnePlus</button><button role="tab" aria-selected="false" data-i="t6">🗣️ No voice</button><button role="tab" aria-selected="false" data-i="t7">🔔 No notifications</button></div>
+<div class="panel" id="t1"><ul><li>Raise the <b>Alarm volume</b> in your phone’s Sound settings. Media volume doesn’t affect it.</li><li>Make sure <b>Do Not Disturb</b> isn’t set to “Total silence”.</li><li>Tap <b>Test alarm</b> to check.</li></ul></div>
+<div class="panel" id="t2" hidden><ul><li>Open <b>Settings › Apps › Zaphalt › Battery</b> and choose <b>Unrestricted</b>, or tap <b>Allow running in background</b> inside Zaphalt.</li><li>On most phones, open Recent apps and <b>lock</b> Zaphalt (long-press its card, choose Lock).</li></ul></div>
+<div class="panel" id="t3" hidden><ul><li>Turn on <b>Autostart</b> for Zaphalt.</li><li>Set battery saver for Zaphalt to <b>No restrictions</b>.</li><li>Lock Zaphalt in Recent apps.</li></ul></div>
+<div class="panel" id="t4" hidden><ul><li>Remove Zaphalt from <b>Sleeping apps</b> and <b>Deep sleeping apps</b>.</li><li>Set Zaphalt’s battery use to <b>Unrestricted</b>.</li></ul></div>
+<div class="panel" id="t5" hidden><ul><li>Allow <b>Auto-launch</b> or <b>Background activity</b> for Zaphalt.</li><li>Set battery use to <b>Unrestricted</b>, then lock Zaphalt in Recent apps.</li></ul></div>
+<div class="panel" id="t6" hidden><ul><li>Install or enable a text-to-speech engine, for example <b>Speech Services by Google</b>, in your phone’s Text-to-speech settings, and download your language.</li><li>Check <b>Voice announcement</b> is on in Zaphalt’s Settings.</li><li>Remember the voice is off at your saved office. During sleep hours it needs <b>Also speak while I sleep</b> on.</li></ul></div>
+<div class="panel" id="t7" hidden><ul><li>Tap <b>Allow</b> on the yellow setup card, or enable notifications for Zaphalt in system settings.</li><li>If Current looks wrong in Battery diagnostics, tap <b>Re-detect current unit &amp; sign</b> in Settings › Reliability.</li><li>“Estimating time…” that never goes away means your phone doesn’t report charging current.</li></ul></div>
+</div></section>
+
+<section id="faq" style="padding-top:0"><div class="w" style="max-width:820px">
+<h2 class="h2">Questions, answered.</h2>
+<details><summary>Does my phone really overcharge?</summary><p>No. Modern phones stop charging at 100%. The harm comes from staying at 100% for a long time and from heat, which is why Zaphalt lets you choose a lower level.</p></details>
+<details><summary>Does Zaphalt drain my battery?</summary><p>It is built to be light. It wakes only when Android reports a battery change and loads the voice engine only when it needs to speak.</p></details>
+<details><summary>Does it work after a restart or with wireless chargers?</summary><p>Yes to both. If Monitoring was on before the restart it comes back on, and any charging method Android reports as charging works.</p></details>
+<details><summary>Can I change the alarm sound?</summary><p>Zaphalt uses your phone’s default alarm sound. Change it in your phone’s Sound settings.</p></details>
+<details><summary>Does it need internet?</summary><p>Only on the Where screen, for the map picture, place search and directions. The alarm, monitoring, notifications and the radar work offline.</p></details>
+<details><summary>Android warns me when I install the APK.</summary><p>That message appears for any app that is not from the Play Store. Allow installs from your browser or file manager, then tap More details and Install anyway on the Play Protect prompt.</p></details>
+</div></section>
+
+<section class="fin" id="download"><div class="w">
+<h2 id="fh">Zap it, <span class="g">then halt.</span></h2>
+<p class="sub" style="margin:16px auto 0" id="fs">Install Zaphalt, switch Monitoring on and plug in.</p>
+<div class="cta"><a class="btn p" id="dl" href="https://drive.google.com/file/d/1fql1Za2nUCnWM1ZM7-IYqqLLYXGIV1vN/view?usp=sharing" download>⚡ Download Zaphalt 2.10</a><a class="btn s" href="USER_MANUAL.md">Read the user manual</a></div>
+<p class="meta">Android 8.0 or newer · Updating? Install over the old app and your settings stay.</p>
+</div></section>
+<footer><div class="w"><span>Made with ⚡ by Shukdev</span><span>Map data © OpenStreetMap contributors · Tiles by OpenFreeMap</span></div></footer>
+
+<script>
+(function(){
+"use strict";
+var $=function(i){return document.getElementById(i)},$$=function(s,r){return Array.prototype.slice.call((r||document).querySelectorAll(s))};
+var still=matchMedia("(prefers-reduced-motion:reduce)").matches;
+function pad(n){return n<10?"0"+n:""+n}
+function fmt(m){m=((m%1440)+1440)%1440;var h=Math.floor(m/60),mm=m%60,ap=h<12?"AM":"PM";h=h%12||12;return h+":"+pad(mm)+" "+ap}
+
+/* ---------- charge cable + page % ---------- */
+var navEl=document.querySelector("nav"),cab=document.querySelector(".cable"),full=false;
+function scrollP(){
+ var h=document.documentElement.scrollHeight-innerHeight,p=h>0?Math.min(1,Math.max(0,scrollY/h)):0,v=Math.round(p*100);
+ navEl.style.setProperty("--p",v+"%");cab.style.setProperty("--p",v+"%");
+ $("pc").textContent=(v>=100?"✅ ":"⚡ ")+v+"%";
+ var f=v>=98;if(f!==full){full=f;$("dl").classList.toggle("full",f);
+  $("fs").textContent=f?"100%. Battery full. Time to unplug, and install.":"Install Zaphalt, switch Monitoring on and plug in."}
+}
+addEventListener("scroll",scrollP,{passive:true});addEventListener("resize",scrollP);scrollP();
+
+/* ---------- audio + speech ---------- */
+var ac=null,osc=null,beepT=null,voiceOn=true,speakT=null;
+function startSound(line){
+ try{ac=ac||new (window.AudioContext||window.webkitAudioContext)();var on=false;
+  function b(){if(!ac)return;var o=ac.createOscillator(),g=ac.createGain();o.type="square";o.frequency.value=on?880:660;on=!on;
+   g.gain.setValueAtTime(.0001,ac.currentTime);g.gain.exponentialRampToValueAtTime(.12,ac.currentTime+.02);g.gain.exponentialRampToValueAtTime(.0001,ac.currentTime+.22);
+   o.connect(g);g.connect(ac.destination);o.start();o.stop(ac.currentTime+.24)}
+  b();beepT=setInterval(b,320)}catch(e){}
+ speak(line)}
+function speak(line){
+ try{if(!("speechSynthesis" in window))return;speechSynthesis.cancel();clearInterval(speakT);
+  var say=function(){speechSynthesis.speak(new SpeechSynthesisUtterance(line))};say();speakT=setInterval(say,5000)}catch(e){}}
+function stopSound(){clearInterval(beepT);clearInterval(speakT);beepT=speakT=null;try{speechSynthesis.cancel()}catch(e){}}
+function buzz(p){try{if(navigator.vibrate)navigator.vibrate(p)}catch(e){}}
+function shake(){if(still)return;var ph=$("phone");ph.classList.remove("shake");void ph.offsetWidth;ph.classList.add("shake");buzz([200,100,200,100,200])}
+
+/* ---------- phone: tabs, setup card, switches ---------- */
+$$(".bn button").forEach(function(b){b.onclick=function(){
+ $$(".bn button").forEach(function(o){o.setAttribute("aria-selected",o===b)});
+ ["live","where","set","guide"].forEach(function(k){$("p-"+k).hidden=(k!==b.dataset.p)})}});
+var fixed=0;
+$$("[data-fix]").forEach(function(b){b.onclick=function(){$(b.dataset.fix).remove();if(++fixed===2){var s=$("setup");s.style.transition="opacity .4s";s.style.opacity=0;setTimeout(function(){s.remove()},420)}}});
+var monOn=true;
+$("mon").onclick=function(){monOn=!monOn;$("msw").className="sw"+(monOn?"":" off");if(!monOn)stopRing();draw()};
+$$(".row2").forEach(function(b){var sw=b.querySelector(".sw");b.onclick=function(){var on=b.getAttribute("aria-pressed")!=="true";b.setAttribute("aria-pressed",on);sw.className="sw"+(on?"":" off");
+ if(b.textContent.indexOf("Voice announcement")>-1)voiceOn=on}});
+$$(".ck").forEach(function(b){b.onclick=function(){b.setAttribute("aria-pressed",b.getAttribute("aria-pressed")!=="true")}});
+
+/* ---------- live ring ---------- */
+var C=628.3,R=100,pct=62,lim=90,ring=false,hold=0,loud=false;
+function ang(p){return(-90+3.6*p)*Math.PI/180}
+function draw(){
+ var v=Math.floor(pct);
+ $("arc").setAttribute("stroke-dashoffset",C*(1-pct/100));
+ $("pv").textContent=v;
+ $("mv").textContent=Math.round(3700+pct*3.3)+" mV";
+ $("tc").textContent=(29.5+pct*.03).toFixed(1)+"°C";
+ var a=ang(lim),x=120+R*Math.cos(a),y=120+R*Math.sin(a);
+ ["dot","dotb"].forEach(function(i){$(i).setAttribute("cx",x);$(i).setAttribute("cy",y)});
+ $("sub").textContent="alarm at "+lim+"%";
+ $("runtxt").textContent=monOn?"Running · alarm at "+lim+"%":"Off";
+ $("limv").textContent=lim+"%";
+ var c=$("chip"),st=$("stage");
+ if(ring){c.textContent="🔔 Unplug the charger!";c.className="chip r";$("eta").textContent="Target "+lim+"% reached";st.classList.add("ringing");$("stop").className="hot"}
+ else if(!monOn){c.textContent="🔋 Monitoring off";c.className="chip";$("eta").textContent="";st.classList.remove("ringing");$("stop").className=""}
+ else{c.textContent="⚡ Charging";c.className="chip";st.classList.remove("ringing");$("stop").className="";
+  var m=Math.max(1,Math.round((lim-pct)*.9));$("eta").textContent=m+" min to "+lim+"%"}
+ $("nx").textContent="Battery is at "+lim+"%. Unplug your charger now.";
+ updEff();
+}
+function startRing(sound){ring=true;hold=36;loud=!!sound;$("notif").classList.add("in");
+ if(sound){startSound("Battery full, please unplug the charger");$("hearbtn").classList.add("on");$("hearbtn").textContent="⏹ Stop the alarm";shake()}
+ draw()}
+function stopRing(){ring=false;$("notif").classList.remove("in");stopSound();$("hearbtn").classList.remove("on");$("hearbtn").textContent="🔊 Hear the alarm";loud=false;pct=Math.min(62,lim-8);draw()}
+function tick(){
+ if(!monOn){draw();return}
+ if(ring){if(!loud&&--hold<=0)stopRing();else draw();return}
+ pct+=.25;if(pct>=lim){pct=Math.max(pct,lim);startRing(false)}
+ draw()}
+$("lim").oninput=function(){lim=+this.value;if(pct>=lim)pct=lim-8;if(ring)stopRing();else draw()};
+$("test").onclick=function(){if(!monOn){monOn=true;$("msw").className="sw"}startRing(false)};
+$("stop").onclick=function(){if(ring)stopRing()};
+$("nstop").onclick=stopRing;
+$("hearbtn").onclick=function(){if(ring&&loud){stopRing();return}if(!monOn){monOn=true;$("msw").className="sw"}$$(".bn button")[0].click();
+ if(!voiceOn){startRing(true);stopVoiceOnly();return}startRing(true)};
+function stopVoiceOnly(){clearInterval(speakT);try{speechSynthesis.cancel()}catch(e){}}
+$("vibbtn").onclick=shake;
+draw();if(!still)setInterval(tick,110);
+
+/* ---------- phone mini map styles ---------- */
+function paintMini(){
+ $("mmg").innerHTML='<path d="M0 0H90L75 40 25 60 0 45Z" fill="var(--water,#9ccbe8)"/><path d="M170 100L250 80 300 105V190H190Z" fill="var(--park,#bfe0b0)"/><g stroke="var(--road,#fff)" stroke-width="6" fill="none"><path d="M0 50H300M0 110H300M0 160H300M60 0V190M140 0V190M220 0V190"/></g><circle cx="220" cy="50" r="22" fill="#3DFFA2" fill-opacity=".25" stroke="#00A86B" stroke-width="2"/><circle cx="60" cy="110" r="6" fill="#0088CC" stroke="#fff" stroke-width="2.5"/>'}
+paintMini();
+var mm=$("mmstyle");
+function setMini(s){$("mm").style.setProperty("color","inherit");var tmp=document.createElement("div");tmp.dataset.s=s;
+ var m=$("mm");var vars={streets:["#efe9da","#fff","#9ccbe8","#bfe0b0"],bright:["#f6f3ea","#fff","#7fc6f0","#a6e0a0"],light:["#eceff1","#fff","#d2dde4","#e2e8e4"],satellite:["#4d5a39","transparent","#1f4a63","#2f5a2a"],hybrid:["#4d5a39","#f2ead0","#1f4a63","#2f5a2a"]}[s];
+ m.style.setProperty("--land",vars[0]);m.style.setProperty("--road",vars[1]);m.style.setProperty("--water",vars[2]);m.style.setProperty("--park",vars[3])}
+$$("button",mm).forEach(function(b){b.onclick=function(){$$("button",mm).forEach(function(o){o.setAttribute("aria-pressed",o===b)});setMini(b.dataset.s)}});
+setMini("streets");
+
+/* ---------- full map: styles, zoom, tilt, search, routes ---------- */
+var mb=$("mb"),zoom=1,tilt=false,pinXY=null,office={x:320,y:70},modes=[["🚗","Drive",1.8,0],["🏍️","2-Wheeler",1.4,1],["🚌","Transit",0,1],["🚶","Walk",0,0]],curMode=0;
+function applyT(){$("msv").style.transform=(tilt?"rotateX(38deg) ":"")+"scale("+zoom+")"}
+$$("button",$("sty")).forEach(function(b){b.onclick=function(){$$("button",$("sty")).forEach(function(o){o.setAttribute("aria-pressed",o===b)});mb.dataset.s=b.dataset.s}});
+$("zi").onclick=function(){zoom=Math.min(1.8,zoom+.2);applyT()};
+$("zo").onclick=function(){zoom=Math.max(.8,zoom-.2);applyT()};
+$("td").onclick=function(){tilt=!tilt;$("td").style.color=tilt?"#00805a":"#111";applyT()};
+$("cp").onclick=function(){tilt=false;zoom=1;$("td").style.color="#111";applyT()};
+$("lc").onclick=function(){zoom=1.4;applyT();setTimeout(function(){zoom=1;applyT()},900)};
+$("so").onclick=function(){office={x:92,y:224};$("oz").setAttribute("cx",92);$("oz").setAttribute("cy",224);$("ozt").setAttribute("x",92);$("ozt").setAttribute("y",188);
+ $("mnote").textContent="Office saved at your position. The 200 m zone is drawn in green and the office rule is on.";if(pinXY)routes()};
+function hash(s){var h=0;for(var i=0;i<s.length;i++)h=(h*31+s.charCodeAt(i))|0;return Math.abs(h)}
+function place(q){
+ var m=q.match(/^\s*(-?\d+(?:\.\d+)?)\s*,\s*(-?\d+(?:\.\d+)?)\s*$/);
+ if(m){var la=+m[1],ln=+m[2];if(Math.abs(la)>90||Math.abs(ln)>180){return null}
+  return{x:40+Math.abs(Math.round(ln*37))%320,y:55+Math.abs(Math.round(la*53))%170,t:"📍 "+la.toFixed(2)+", "+ln.toFixed(2)}}
+ var h=hash(q.toLowerCase());return{x:40+h%320,y:55+(h>>5)%170,t:"📍 "+q.trim()}}
+function routes(){
+ var me={x:92,y:224},d=pinXY;if(!d)return;
+ var px=Math.abs(me.x-d.x)+Math.abs(me.y-d.y),km=Math.max(.4,px*.045);
+ var mins=[km/ (30/1.8/1.8)*60/1.8*1.0,0,0,0];
+ var drive=Math.max(2,Math.round(km/22*60)),two=Math.max(2,Math.round(drive*.8)),tr=Math.round(10+km/14*60),wk=Math.round(km/5*60);
+ var vals=[drive,two,tr,wk],est=[0,1,1,0];
+ $("rt").setAttribute("d","M"+me.x+" "+me.y+"H"+d.x+"V"+d.y);
+ $("modes").hidden=false;$("etaw").hidden=false;
+ $("modes").innerHTML=modes.map(function(m,i){return'<button aria-pressed="'+(i===curMode)+'" data-m="'+i+'"><span style="font-size:18px">'+m[0]+'</span><b>'+(est[i]?"~":"")+(vals[i]<60?vals[i]+" min":Math.floor(vals[i]/60)+" h "+vals[i]%60+" min")+'</b>'+m[1]+'</button>'}).join("");
+ var by=["by car","by two-wheeler","by transit","on foot"],dash=["","","10 8","2 9"];
+ $("rt").setAttribute("stroke-dasharray",dash[curMode]);
+ $("etaw").innerHTML=(vals[curMode]<60?vals[curMode]+" min":Math.floor(vals[curMode]/60)+" h "+vals[curMode]%60+" min")+" <small>"+by[curMode]+" · "+km.toFixed(1)+" km · no live traffic</small>";
+ $$("button",$("modes")).forEach(function(b){b.onclick=function(){curMode=+b.dataset.m;routes()}})}
+$("sf").onsubmit=function(e){e.preventDefault();var q=$("q").value;if(!q.trim())return;var p=place(q);
+ if(!p){$("mnote").textContent="Those coordinates are out of range. Latitude is −90 to 90 and longitude −180 to 180.";return}
+ pinXY={x:p.x,y:p.y};var pin=$("pin");pin.setAttribute("transform","translate("+p.x+" "+p.y+")");pin.setAttribute("opacity",1);
+ $("mnote").textContent=p.t+" · Demo pin. The real app searches OpenStreetMap places and flies the map there.";routes()};
+$("qx").onclick=function(){$("q").value="";pinXY=null;$("pin").setAttribute("opacity",0);$("rt").setAttribute("d","");$("modes").hidden=true;$("etaw").hidden=true;$("mnote").textContent="Pin cleared."};
+
+/* ---------- radar ---------- */
+var ranges=[100,200,400,800,1600],zi=2,auto=true,headUp=false,HEAD=40,OFF={d:240,b:45},trail=[],tr0=0;
+function radarDraw(){
+ var rg=ranges[zi],scale=140/rg,b=OFF.b*Math.PI/180,
+ ox=150+Math.sin(b)*OFF.d*scale,oy=150-Math.cos(b)*OFF.d*scale,out=OFF.d>rg*1.0;
+ var dx=ox-150,dy=oy-150,dd=Math.sqrt(dx*dx+dy*dy);if(dd>138){ox=150+dx/dd*138;oy=150+dy/dd*138}
+ $("roz").setAttribute("cx",ox);$("roz").setAttribute("cy",oy);$("roz").setAttribute("r",Math.max(4,200*scale));
+ $("rol").setAttribute("d","M150 150L"+ox+" "+oy);
+ $("r1").textContent=Math.round(rg/3)+" m";$("r2").textContent=Math.round(rg*2/3)+" m";$("r3").textContent=rg+" m";
+ var rot=headUp?-HEAD:0;$("rg").style.transform="rotate("+rot+"deg)";
+ [["lN",150,38],["lE",262,154],["lS",150,272],["lW",38,154]].forEach(function(l){var e=$(l[0]);e.style.transformOrigin=l[1]+"px "+(l[2]-4)+"px";e.style.transform="rotate("+(-rot)+"deg)"});
+ $("wedge").style.transform="rotate("+(headUp?0:HEAD)+"deg)";
+ $("rtr").innerHTML=trail.map(function(t,i){var a=(225)*Math.PI/180,dm=t*7,r=dm*scale;return'<circle cx="'+(150+Math.sin(a)*r)+'" cy="'+(150-Math.cos(a)*r)+'" r="'+(3.8-i*.25)+'" opacity="'+Math.max(.15,.8-i*.1)+'"/>'}).join("");
+ $("rinfo").innerHTML=OFF.d+" m NE <small>to the office · about "+Math.round(OFF.d/80)+" min on foot · heading "+HEAD+"° NE</small>"}
+function autoZ(){zi=2;for(var i=0;i<ranges.length;i++){if(ranges[i]>=OFF.d*1.3){zi=i;break}}}
+$$("button",$("rmode")).forEach(function(b){if(!b.dataset.m)return;b.onclick=function(){$$("button",$("rmode")).forEach(function(o){if(o.dataset.m)o.setAttribute("aria-pressed",o===b)});headUp=b.dataset.m==="h";radarDraw()}});
+$("ctr").onclick=function(){trail=[];radarDraw()};
+$$("button",$("rz")).forEach(function(b){b.onclick=function(){var z=+b.dataset.z;
+ if(z===0){auto=true;autoZ()}else{auto=false;zi=Math.max(0,Math.min(ranges.length-1,zi-z))}
+ $$("button",$("rz")).forEach(function(o){if(o.dataset.z==="0")o.setAttribute("aria-pressed",auto)});radarDraw()}});
+autoZ();trail=[1,2,3,4,5];radarDraw();
+if(!still)setInterval(function(){trail.unshift(0);trail=trail.map(function(t){return t+1}).slice(0,8);trail.unshift(0);trail=trail.filter(function(v,i,a){return a.indexOf(v)===i}).slice(0,8);radarDraw()},1800);
+
+/* ---------- sleep dial ---------- */
+var mode="frisat",sel=0,times=[],i;
+for(i=0;i<7;i++)times.push({s:0,w:(i===5||i===6)?510:390});
+var DN=["Sun","Mon","Tue","Wed","Thu","Fri","Sat"],CX=150,CY=150,RR=112;
+function groups(m){return m==="same"?[[0,1,2,3,4,5,6]]:m==="fri"?[[0,1,2,3,4,6],[5]]:m==="frisat"?[[0,1,2,3,4],[5,6]]:[0,1,2,3,4,5,6].map(function(d){return[d]})}
+function gOf(d){var g=groups(mode);for(var k=0;k<g.length;k++)if(g[k].indexOf(d)>-1)return g[k];return[d]}
+function gName(g){if(g.length===7)return"Every day";if(g.length===1)return DN[g[0]];return g.map(function(d){return DN[d]}).join(", ").replace(/Sun, Mon, Tue, Wed, Thu/,"Sun – Thu")}
+function pt(m,r){var a=(m/1440)*2*Math.PI-Math.PI/2;return[CX+r*Math.cos(a),CY+r*Math.sin(a)]}
+var tk="";for(i=0;i<24;i+=3){var q=pt(i*60,86);tk+='<text x="'+q[0]+'" y="'+(q[1]+4)+'">'+(i===0?"12 AM":i===12?"12 PM":i<12?i+" AM":(i-12)+" PM")+'</text>'}
+$("ticks").innerHTML=tk;
+function drawDial(){
+ var t=times[sel],s=t.s,w=t.w,g=gOf(sel);
+ var a=pt(s,RR),b=pt(w,RR),span=((w-s)+1440)%1440;
+ $("arcs").setAttribute("d",span===0?"":"M"+a[0]+" "+a[1]+" A"+RR+" "+RR+" 0 "+(span>720?1:0)+" 1 "+b[0]+" "+b[1]);
+ $("hs").setAttribute("transform","translate("+a[0]+" "+a[1]+")");$("hw").setAttribute("transform","translate("+b[0]+" "+b[1]+")");
+ $("hs").setAttribute("aria-valuenow",s);$("hw").setAttribute("aria-valuenow",w);
+ $("hs").setAttribute("aria-valuetext",fmt(s));$("hw").setAttribute("aria-valuetext",fmt(w));
+ $("dur").textContent=Math.floor(span/60)+"h "+(span%60?span%60+"m":"");
+ $("dgrp").textContent=gName(g);$("rs").textContent=fmt(s);$("rw").textContent=fmt(w);
+ $("days").innerHTML=DN.map(function(n,d){return'<button aria-pressed="'+(g.indexOf(d)>-1)+'" class="'+(groups(mode).some(function(x){return x.length>1&&x.indexOf(d)>-1&&x.indexOf(sel)===-1})?"gp":"")+'" data-d="'+d+'">'+n+'</button>'}).join("");
+ $$("button",$("days")).forEach(function(bt){bt.onclick=function(){sel=+bt.dataset.d;drawDial()}});
+ updEff()}
+function setT(which,m){m=((Math.round(m/5)*5)%1440+1440)%1440;gOf(sel).forEach(function(d){times[d][which]=m});drawDial()}
+function ptr(e){var r=$("dial").getBoundingClientRect(),x=(e.clientX-r.left)/r.width*300-CX,y=(e.clientY-r.top)/r.height*300-CY;
+ var a=Math.atan2(y,x)+Math.PI/2;if(a<0)a+=2*Math.PI;return a/(2*Math.PI)*1440}
+[["hs","s"],["hw","w"]].forEach(function(p){var el=$(p[0]),drag=false;
+ el.addEventListener("pointerdown",function(e){drag=true;el.setPointerCapture(e.pointerId);e.preventDefault()});
+ el.addEventListener("pointermove",function(e){if(drag)setT(p[1],ptr(e))});
+ el.addEventListener("pointerup",function(){drag=false});
+ el.addEventListener("keydown",function(e){var d=e.key==="ArrowRight"||e.key==="ArrowUp"?5:e.key==="ArrowLeft"||e.key==="ArrowDown"?-5:0;if(d){e.preventDefault();setT(p[1],times[sel][p[1]]+d)}})});
+$$("input[name=g]").forEach(function(r){r.onchange=function(){var prev=sel;mode=r.value;
+ groups(mode).forEach(function(g){var f=times[g[0]];g.forEach(function(d){times[d]={s:f.s,w:f.w}})});sel=prev;drawDial()}});
+var nl=80,nv=true;
+$("nl").oninput=function(){nl=+this.value;$("nlv").textContent=nl+"%";updEff()};
+$("nv").onclick=function(){nv=!nv;this.setAttribute("aria-checked",nv);this.firstChild.className="sw"+(nv?"":" off");updEff()};
+function updEff(){var e=$("eff");if(!e)return;e.innerHTML="While you sleep, Zaphalt will alert you at <b>"+Math.min(lim,nl)+"%</b> (the lower of your alarm level "+lim+"% and night limit "+nl+"%). "+(nv?"It vibrates and speaks, but never rings.":"It only vibrates.")}
+var tsaT=null,buzzOsc=null,buzzTs=[];
+function fakeBuzz(p){try{ac=ac||new (window.AudioContext||window.webkitAudioContext)();if(ac.state==="suspended")ac.resume()}catch(e){return}
+ var t=0;p.forEach(function(ms,i){if(i%2===0){buzzTs.push(setTimeout(function(){try{var o=ac.createOscillator(),g=ac.createGain();o.type="sawtooth";o.frequency.value=140;g.gain.value=.1;
+  o.connect(g);g.connect(ac.destination);o.start();buzzOsc=o;o.stop(ac.currentTime+ms/1000)}catch(e){}},t))}t+=ms})}
+function stopFakeBuzz(){buzzTs.forEach(clearTimeout);buzzTs=[];try{if(buzzOsc)buzzOsc.stop()}catch(e){}buzzOsc=null}
+function vib(p){var c=document.querySelector("#sleep .ctl");c.classList.remove("shk");void c.offsetWidth;c.classList.add("shk");
+ if(navigator.vibrate){buzz(p)}else{fakeBuzz(p)}}
+function endTest(){clearTimeout(tsaT);stopSound();stopFakeBuzz();try{if(navigator.vibrate)navigator.vibrate(0)}catch(e){}
+ document.querySelector("#sleep .ctl").classList.remove("shk");$("tst").hidden=true;$("tsstop").hidden=true}
+$("tsa").onclick=function(){endTest();var t=$("tst");t.hidden=false;$("tsstop").hidden=false;
+ if(nv&&voiceOn){
+  t.innerHTML="🔔 <b>Sleep-hours alert</b> · vibrating and speaking, no ringing";
+  vib([300,150,300,150,300]);
+  speak("Battery full, please unplug the charger");
+ }else{
+  t.innerHTML="📳 <b>Sleep-hours alert</b> · vibrating only";
+  vib([500,200,500,200,500,200,500]);
+ }
+ tsaT=setTimeout(endTest,8000)};
+$("tsstop").onclick=endTest;
+drawDial();
+
+/* ---------- diagnostics ---------- */
+var calMa=2840;
+function rawText(){var v=4.012;return"current_now = "+(calMa*1000)+" µA\ncurrent_avg = 2796000 µA\nvoltage    = 4012 mV\ntemperature= 314 (0.1 °C)\ncharge_cnt = 3118000 µAh\nlevel      = 62 %\nstatus     = CHARGING (2)\nplugged    = AC (1)\nunit/sign  = µA, + charging"}
+$("rawb").onclick=function(){var r=$("raw");r.hidden=!r.hidden;if(!r.hidden)r.textContent=rawText();this.textContent=r.hidden?"Show raw readings ▼":"Hide raw readings ▲"};
+function dtoast(t){var e=$("dt");e.hidden=false;e.textContent=t;clearTimeout(dtoast.t);dtoast.t=setTimeout(function(){e.hidden=true},3500)}
+$("cpy").onclick=function(){var t="Zaphalt 2.10 readings\n"+rawText();
+ if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(t).then(function(){dtoast("Copied. Paste it into a message.")},function(){dtoast("Copy blocked by the browser. Select the raw readings instead.")})}else dtoast("Copy isn’t available here.")};
+$("red").onclick=function(){dtoast("Detected: microamps, + means charging. Looks right.")};
+if(!still)setInterval(function(){calMa=2840+Math.round((Math.random()-.5)*120);
+ $("ma").textContent="+"+calMa+" mA";$("pw").textContent="+"+(calMa*4.012/1000).toFixed(2)+" W";if(!$("raw").hidden)$("raw").textContent=rawText()},1000);
+
+/* ---------- tab groups: install + troubleshooting ---------- */
+function tabset(id){var bs=$$("button",$(id));bs.forEach(function(b){b.onclick=function(){bs.forEach(function(o){o.setAttribute("aria-selected",o===b);$(o.dataset.i).hidden=(o!==b)})}})}
+tabset("itabs");tabset("ttabs");
+})();
+</script>
+</body>
+</html>
